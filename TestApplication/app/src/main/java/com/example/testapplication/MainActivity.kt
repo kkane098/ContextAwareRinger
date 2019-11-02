@@ -15,6 +15,7 @@ import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import androidx.core.content.ContextCompat.getSystemService
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.pm.PackageManager
 import android.widget.Toast
 import kotlin.concurrent.thread
 import com.google.android.gms.awareness.Awareness;
@@ -35,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private val FENCE_RECEIVER_ACTION =
         "com.example.testapplication.FENCE_RECEIVER_ACTION"
     private val TAG = "TEST-CONTEXT"
+    private val ACTIVITY_PERMISSION_REQUEST = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +62,49 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun needsRuntimePermission(): Boolean {
+        // Check the SDK version and whether the permission is already granted.
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(
+            android.Manifest.permission.ACTIVITY_RECOGNITION
+        ) != PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun registerActivityFence() {
+        //Toast.makeText(this, "registering fence", Toast.LENGTH_SHORT).show()
+        val activityFence = DetectedActivityFence.during(DetectedActivityFence.ON_FOOT)
+        Awareness.getFenceClient(this).updateFences(
+            FenceUpdateRequest.Builder().addFence(
+                FENCE_KEY,
+                activityFence,
+                mPendingIntent
+            ).build()
+        ).addOnSuccessListener {
+            Log.i(TAG, "Successfully registered fence")
+        }.addOnFailureListener {
+            Log.e(TAG,"Fence could not be registered: $it")
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == ACTIVITY_PERMISSION_REQUEST) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                registerActivityFence()
+            } else {
+                Toast.makeText(
+                    this,
+                    "You need to grant activity detection permissions for this app!",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+            }
+        }
+    }
+
+
     fun onSilentPress(view: View) {
         Log.i(TAG, "Pressed silent")
         mAudioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
@@ -70,24 +115,23 @@ class MainActivity : AppCompatActivity() {
 
     fun onVibratePress(view: View) {
         Log.i(TAG, "Pressed vibrate")
-        val startTime = 13L * 60L * 60L * 1000L + 3L * 60L * 1000L
-        val endTime = startTime + 60L * 60L * 1000L
-        var timeFence = TimeFence.inDailyInterval(
-            TimeZone.getDefault(),
-            startTime,
-            endTime
-        )
-        var headphoneFence = HeadphoneFence.during(HeadphoneState.PLUGGED_IN)
-        Awareness.getFenceClient(this).updateFences(
-            FenceUpdateRequest.Builder().addFence(
-                FENCE_KEY,
-                timeFence,
-                mPendingIntent
-            ).build()
-        ).addOnSuccessListener {
-            Log.i(TAG, "Successfully registered fence!")
-        }.addOnFailureListener {
-            Log.e(TAG, "Fence could not be registered: $it")
+        /* val startTime = 13L * 60L * 60L * 1000L + 3L * 60L * 1000L
+         val endTime = startTime + 60L * 60L * 1000L
+         var timeFence = TimeFence.inDailyInterval(
+             TimeZone.getDefault(),
+             startTime,
+             endTime
+         )
+         var headphoneFence = HeadphoneFence.during(HeadphoneState.PLUGGED_IN)
+        */
+        if (needsRuntimePermission()) {
+            Log.i(TAG, "Requesting permissions")
+            requestPermissions(
+                arrayOf(android.Manifest.permission.ACTIVITY_RECOGNITION),
+                ACTIVITY_PERMISSION_REQUEST
+            )
+        } else {
+            registerActivityFence()
         }
     }
 
