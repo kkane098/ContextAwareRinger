@@ -30,7 +30,8 @@ import com.google.android.gms.location.DetectedActivity;
 class FenceBroadcastReceiver : BroadcastReceiver() {
 
     private val TAG = "TEST-RECEIVER"
-    private val FENCE_KEY = "TEST_FENCE_KEY2"
+    private val LOCATION_FENCE_KEY = "TEST_FENCE_KEY"
+    private val ACTIVITY_FENCE_KEY = "TEST_FENCE_KEY2"
 
     override fun onReceive(context: Context, intent: Intent) {
 
@@ -39,18 +40,34 @@ class FenceBroadcastReceiver : BroadcastReceiver() {
         Toast.makeText(context, "Broadcast Received by Receiver", Toast.LENGTH_LONG).show()
         val fenceState = FenceState.extract(intent)
 
-        if (TextUtils.equals(fenceState.fenceKey, FENCE_KEY)) {
+        if (TextUtils.equals(fenceState.fenceKey, ACTIVITY_FENCE_KEY)) {
             when(fenceState.currentState){
                 FenceState.TRUE -> {
                     val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
                     audioManager.ringerMode = AudioManager.RINGER_MODE_VIBRATE
-                    Log.i(TAG, "Fence state was true!")
+                    Log.i(TAG, "Activity fence state was true!")
                 }
                 FenceState.FALSE -> {
-                    Log.i(TAG, "Fence state was false!")
+                    Log.i(TAG, "Activity fence state was false!")
                 }
                 FenceState.UNKNOWN -> {
-                    Log.i(TAG, "Fence state unknown!")
+                    Log.i(TAG, "Activity fence state unknown!")
+                }
+            }
+        } else if (TextUtils.equals(fenceState.fenceKey, LOCATION_FENCE_KEY)){
+            when(fenceState.currentState){
+                FenceState.TRUE -> {
+                    val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                    audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
+                    Thread.sleep(1000)
+                    audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+                    Log.i(TAG, "Location fence state was true!")
+                }
+                FenceState.FALSE -> {
+                    Log.i(TAG, "Location fence state was false!")
+                }
+                FenceState.UNKNOWN -> {
+                    Log.i(TAG, "Location fence state unknown!")
                 }
             }
         }
