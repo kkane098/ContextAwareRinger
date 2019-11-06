@@ -1,5 +1,3 @@
 package com.example.ContextAwareRinger.Data
 
-class HeadphonesData {
-    //TODO: add vars to be stored
-}
+data class HeadphonesData(val headphoneState: Int, val fenceKey: String, val ringerMode: Int)

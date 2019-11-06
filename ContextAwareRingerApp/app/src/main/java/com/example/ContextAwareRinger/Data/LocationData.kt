@@ -1,5 +1,3 @@
 package com.example.ContextAwareRinger.Data
 
-class LocationData {
-    //TODO: fill in vars to be stored
-}
+data class LocationData(val lat: Double, val lng: Double, val radius: Double, val fenceKey: String, val ringerMode: Int)
