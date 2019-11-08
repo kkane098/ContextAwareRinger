@@ -52,18 +52,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     private fun needsActivityRuntimePermission(): Boolean {
-        // Check the SDK version and whether the permission is already granted.
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(
+        // Runtime permission requirement added in Android 10 (API level 29)
+        return Build.VERSION.SDK_INT >= 29 && checkSelfPermission(
             android.Manifest.permission.ACTIVITY_RECOGNITION
         ) != PackageManager.PERMISSION_GRANTED
     }
 
     private fun needsLocationRuntimePermission(): Boolean {
-        // Check the SDK version and whether the permission is already granted.
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                        checkSelfPermission(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        // Prior to Android 10, only needed FINE_LOCATION, but now also need BACKGROUND_LOCATION
+        return when {
+            Build.VERSION.SDK_INT >= 29 -> checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            else -> false
+        }
     }
 
     private fun registerActivityFence() {
@@ -114,7 +118,8 @@ class MainActivity : AppCompatActivity() {
                     .show()
             }
         } else if (requestCode == LOCATION_PERMISSION_REQUEST) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+            // Checks if either both permissions are granted or FINE_LOCATION is granted and the device is running an Android version prior to 10
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED || (grantResults[0] == PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT < 29)) {
                 // Permission is granted
                 registerLocationFence()
             } else {
