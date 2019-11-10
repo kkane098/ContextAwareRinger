@@ -32,6 +32,7 @@ class FenceBroadcastReceiver : BroadcastReceiver() {
     private val TAG = "TEST-RECEIVER"
     private val LOCATION_FENCE_KEY = "TEST_FENCE_KEY"
     private val ACTIVITY_FENCE_KEY = "TEST_FENCE_KEY2"
+    private val HEADPHONE_FENCE_KEY = "TEST_FENCE_KEY3"
 
     override fun onReceive(context: Context, intent: Intent) {
 
@@ -40,38 +41,57 @@ class FenceBroadcastReceiver : BroadcastReceiver() {
         Toast.makeText(context, "Broadcast Received by Receiver", Toast.LENGTH_LONG).show()
         val fenceState = FenceState.extract(intent)
 
-        if (TextUtils.equals(fenceState.fenceKey, ACTIVITY_FENCE_KEY)) {
-            when(fenceState.currentState){
-                FenceState.TRUE -> {
-                    val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-                    audioManager.ringerMode = AudioManager.RINGER_MODE_VIBRATE
-                    Log.i(TAG, "Activity fence state was true!")
+        when {
+            TextUtils.equals(fenceState.fenceKey, ACTIVITY_FENCE_KEY) ->
+                when (fenceState.currentState) {
+                    FenceState.TRUE -> {
+                        val audioManager =
+                            context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                        audioManager.ringerMode = AudioManager.RINGER_MODE_VIBRATE
+                        Log.i(TAG, "Activity fence state was true!")
+                    }
+                    FenceState.FALSE -> {
+                        Log.i(TAG, "Activity fence state was false!")
+                    }
+                    FenceState.UNKNOWN -> {
+                        Log.i(TAG, "Activity fence state unknown!")
+                    }
                 }
-                FenceState.FALSE -> {
-                    Log.i(TAG, "Activity fence state was false!")
+            TextUtils.equals(fenceState.fenceKey, LOCATION_FENCE_KEY) ->
+                when (fenceState.currentState) {
+                    FenceState.TRUE -> {
+                        val audioManager =
+                            context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                        audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
+                        Thread.sleep(1000)
+                        audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+                        Log.i(TAG, "Location fence state was true!")
+                    }
+                    FenceState.FALSE -> {
+                        Log.i(TAG, "Location fence state was false!")
+                    }
+                    FenceState.UNKNOWN -> {
+                        Log.i(TAG, "Location fence state unknown!")
+                    }
                 }
-                FenceState.UNKNOWN -> {
-                    Log.i(TAG, "Activity fence state unknown!")
+            TextUtils.equals(fenceState.fenceKey, HEADPHONE_FENCE_KEY) ->
+                when (fenceState.currentState) {
+                    FenceState.TRUE -> {
+                        val audioManager =
+                            context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                        audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
+                        Thread.sleep(1000)
+                        audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+                        Log.i(TAG, "Headphone fence state was true!")
+                    }
+                    FenceState.FALSE -> {
+                        Log.i(TAG, "Headphone fence state was false!")
+                    }
+                    FenceState.UNKNOWN -> {
+                        Log.i(TAG, "Headphone fence state unknown!")
+                    }
                 }
-            }
-        } else if (TextUtils.equals(fenceState.fenceKey, LOCATION_FENCE_KEY)){
-            when(fenceState.currentState){
-                FenceState.TRUE -> {
-                    val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-                    audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
-                    Thread.sleep(1000)
-                    audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
-                    Log.i(TAG, "Location fence state was true!")
-                }
-                FenceState.FALSE -> {
-                    Log.i(TAG, "Location fence state was false!")
-                }
-                FenceState.UNKNOWN -> {
-                    Log.i(TAG, "Location fence state unknown!")
-                }
-            }
         }
-
     }
 
 }

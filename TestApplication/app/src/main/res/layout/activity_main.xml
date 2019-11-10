@@ -7,23 +7,43 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/silence_button"
+        android:id="@+id/unregister_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Silence"
-        android:onClick="onSilentPress"
+        android:text="Unregister fences"
+        android:onClick="onUnregisterPress"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/vibrate_button"
+        android:id="@+id/headphones_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Vibrate"
-        android:onClick="onVibratePress"
-        app:layout_constraintBottom_toTopOf="@id/silence_button"
+        android:text="Headphones"
+        android:onClick="onHeadphonesPress"
+        app:layout_constraintBottom_toTopOf="@id/unregister_button"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/location_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        android:onClick="onLocationPress"
+        app:layout_constraintBottom_toTopOf="@id/headphones_button"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <Button
+        android:id="@+id/activity_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Activity"
+        android:onClick="onActivityPress"
+        app:layout_constraintBottom_toTopOf="@id/location_button"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
@@ -33,7 +53,7 @@
         android:layout_height="wrap_content"
         android:text="Normal"
         android:onClick="onNormalPress"
-        app:layout_constraintBottom_toTopOf="@id/vibrate_button"
+        app:layout_constraintBottom_toTopOf="@id/activity_button"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 

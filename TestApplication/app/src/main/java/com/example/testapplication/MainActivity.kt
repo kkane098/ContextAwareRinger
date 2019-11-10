@@ -12,8 +12,18 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.pm.PackageManager
 import android.widget.Toast
-import com.google.android.gms.awareness.Awareness;
+import com.google.android.gms.awareness.Awareness
 import com.google.android.gms.awareness.fence.*
+import androidx.annotation.NonNull
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.awareness.fence.FenceUpdateRequest
+import androidx.core.app.ComponentActivity
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -22,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mPendingIntent: PendingIntent
     private val LOCATION_FENCE_KEY = "TEST_FENCE_KEY"
     private val ACTIVITY_FENCE_KEY = "TEST_FENCE_KEY2"
+    private val HEADPHONE_FENCE_KEY = "TEST_FENCE_KEY3"
     private val FENCE_RECEIVER_ACTION =
         "com.example.testapplication.FENCE_RECEIVER_ACTION"
     private val TAG = "TEST-CONTEXT"
@@ -119,7 +130,7 @@ class MainActivity : AppCompatActivity() {
             }
         } else if (requestCode == LOCATION_PERMISSION_REQUEST) {
             // Checks if either both permissions are granted or FINE_LOCATION is granted and the device is running an Android version prior to 10
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED || (grantResults[0] == PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT < 29)) {
+            if ((grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) || (grantResults[0] == PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT < 29)) {
                 // Permission is granted
                 registerLocationFence()
             } else {
@@ -132,12 +143,22 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    private fun unregisterFence(fenceKey : String){
+        Awareness.getFenceClient(this).updateFences(
+            FenceUpdateRequest.Builder()
+                .removeFence(fenceKey)
+                .build()
+        )
+            .addOnSuccessListener { Log.i(TAG, "Fence $fenceKey  successfully unregistered.") }
+            .addOnFailureListener { e -> Log.e(TAG, "Fence $fenceKey  not be unregistered: $e") }
+
+    }
 
 
-    fun onSilentPress(view: View) {
-        Log.i(TAG, "Pressed silent")
+    fun onLocationPress(view: View) {
+        Log.i(TAG, "Pressed location")
         if (needsLocationRuntimePermission()) {
-            Log.i(TAG, "Requesting activity permissions")
+            Log.i(TAG, "Requesting location permissions")
             requestPermissions(
                 arrayOf(
                     android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -149,8 +170,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun onVibratePress(view: View) {
-        Log.i(TAG, "Pressed vibrate")
+    fun onActivityPress(view: View) {
+        Log.i(TAG, "Pressed activity")
         /* val startTime = 13L * 60L * 60L * 1000L + 3L * 60L * 1000L
          val endTime = startTime + 60L * 60L * 1000L
          var timeFence = TimeFence.inDailyInterval(
@@ -158,7 +179,6 @@ class MainActivity : AppCompatActivity() {
              startTime,
              endTime
          )
-         var headphoneFence = HeadphoneFence.during(HeadphoneState.PLUGGED_IN)
         */
         if (needsActivityRuntimePermission()) {
             Log.i(TAG, "Requesting activity permissions")
@@ -171,9 +191,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun onHeadphonesPress(view: View){
+        var headphoneFence = HeadphoneFence.pluggingIn()
+        Awareness.getFenceClient(this).updateFences(
+            FenceUpdateRequest.Builder().addFence(
+                HEADPHONE_FENCE_KEY,
+                headphoneFence,
+                mPendingIntent
+            ).build()
+        ).addOnSuccessListener {
+            Log.i(TAG, "Successfully registered fence")
+        }.addOnFailureListener {
+            Log.e(TAG, "Fence could not be registered: $it")
+        }
+    }
+
     fun onNormalPress(view: View) {
         Log.i(TAG, "Pressed normal")
         mAudioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
+    }
+
+    fun onUnregisterPress(view: View) {
+        Log.i(TAG, "Pressed unregister")
+        unregisterFence(LOCATION_FENCE_KEY)
+        unregisterFence(ACTIVITY_FENCE_KEY)
+        unregisterFence(HEADPHONE_FENCE_KEY)
     }
 
 }
