@@ -1,3 +1,5 @@
 package com.example.ContextAwareRinger.Data
 
-data class ActivityData(val activityType: Int, val fenceKey: String, val ringerMode: Int)
+import java.io.Serializable
+
+data class ActivityData (val activityType: Int, val fenceKey: String, val ringerMode: Int): Serializable
