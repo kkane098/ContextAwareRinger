@@ -1,3 +1,6 @@
 package com.example.ContextAwareRinger.Data
 
-data class LocationData(val lat: Double, val lng: Double, val radius: Double, val fenceKey: String, val ringerMode: Int)
+import java.io.Serializable
+
+data class LocationData(val lat: Double, val lng: Double, val radius: Double, val fenceKey: String, val ringerMode: Int) :
+    Serializable
