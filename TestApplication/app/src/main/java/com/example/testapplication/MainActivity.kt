@@ -22,8 +22,7 @@ import androidx.core.app.ComponentActivity
 import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
-
+import java.util.TimeZone
 
 
 class MainActivity : AppCompatActivity() {
@@ -33,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private val LOCATION_FENCE_KEY = "TEST_FENCE_KEY"
     private val ACTIVITY_FENCE_KEY = "TEST_FENCE_KEY2"
     private val HEADPHONE_FENCE_KEY = "TEST_FENCE_KEY3"
+    private val TIME_FENCE_KEY = "TEST_FENCE_KEY4"
     private val FENCE_RECEIVER_ACTION =
         "com.example.testapplication.FENCE_RECEIVER_ACTION"
     private val TAG = "TEST-CONTEXT"
@@ -143,7 +143,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    private fun unregisterFence(fenceKey : String){
+
+    private fun unregisterFence(fenceKey: String) {
         Awareness.getFenceClient(this).updateFences(
             FenceUpdateRequest.Builder()
                 .removeFence(fenceKey)
@@ -172,14 +173,6 @@ class MainActivity : AppCompatActivity() {
 
     fun onActivityPress(view: View) {
         Log.i(TAG, "Pressed activity")
-        /* val startTime = 13L * 60L * 60L * 1000L + 3L * 60L * 1000L
-         val endTime = startTime + 60L * 60L * 1000L
-         var timeFence = TimeFence.inDailyInterval(
-             TimeZone.getDefault(),
-             startTime,
-             endTime
-         )
-        */
         if (needsActivityRuntimePermission()) {
             Log.i(TAG, "Requesting activity permissions")
             requestPermissions(
@@ -191,12 +184,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun onHeadphonesPress(view: View){
+    fun onHeadphonesPress(view: View) {
         var headphoneFence = HeadphoneFence.pluggingIn()
         Awareness.getFenceClient(this).updateFences(
             FenceUpdateRequest.Builder().addFence(
                 HEADPHONE_FENCE_KEY,
                 headphoneFence,
+                mPendingIntent
+            ).build()
+        ).addOnSuccessListener {
+            Log.i(TAG, "Successfully registered fence")
+        }.addOnFailureListener {
+            Log.e(TAG, "Fence could not be registered: $it")
+        }
+    }
+
+    fun onTimePress(view: View) {
+        Log.i(TAG, "Pressed time")
+        val startTime = 21L * 60L * 60L * 1000L + 0L * 60L * 1000L
+        val endTime = startTime + 60L * 60L * 1000L
+        val defaultTZ = TimeZone.getDefault().displayName
+        Log.i(TAG, "Default TimeZone is $defaultTZ")
+        var timeFence = TimeFence.inDailyInterval(
+            TimeZone.getDefault(),
+            startTime,
+            endTime
+        )
+        Awareness.getFenceClient(this).updateFences(
+            FenceUpdateRequest.Builder().addFence(
+                TIME_FENCE_KEY,
+                timeFence,
                 mPendingIntent
             ).build()
         ).addOnSuccessListener {
@@ -216,6 +233,7 @@ class MainActivity : AppCompatActivity() {
         unregisterFence(LOCATION_FENCE_KEY)
         unregisterFence(ACTIVITY_FENCE_KEY)
         unregisterFence(HEADPHONE_FENCE_KEY)
+        unregisterFence(TIME_FENCE_KEY)
     }
 
 }

@@ -33,6 +33,7 @@ class FenceBroadcastReceiver : BroadcastReceiver() {
     private val LOCATION_FENCE_KEY = "TEST_FENCE_KEY"
     private val ACTIVITY_FENCE_KEY = "TEST_FENCE_KEY2"
     private val HEADPHONE_FENCE_KEY = "TEST_FENCE_KEY3"
+    private val TIME_FENCE_KEY = "TEST_FENCE_KEY4"
 
     override fun onReceive(context: Context, intent: Intent) {
 
@@ -89,6 +90,23 @@ class FenceBroadcastReceiver : BroadcastReceiver() {
                     }
                     FenceState.UNKNOWN -> {
                         Log.i(TAG, "Headphone fence state unknown!")
+                    }
+                }
+            TextUtils.equals(fenceState.fenceKey, TIME_FENCE_KEY) ->
+                when (fenceState.currentState) {
+                    FenceState.TRUE -> {
+                        val audioManager =
+                            context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                        audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
+                        Thread.sleep(1000)
+                        audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+                        Log.i(TAG, "Time fence state was true!")
+                    }
+                    FenceState.FALSE -> {
+                        Log.i(TAG, "Time fence state was false!")
+                    }
+                    FenceState.UNKNOWN -> {
+                        Log.i(TAG, "Time fence state unknown!")
                     }
                 }
         }

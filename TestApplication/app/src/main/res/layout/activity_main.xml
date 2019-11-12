@@ -48,12 +48,22 @@
         app:layout_constraintRight_toRightOf="parent"/>
 
     <Button
+        android:id="@+id/time_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time"
+        android:onClick="onTimePress"
+        app:layout_constraintBottom_toTopOf="@id/activity_button"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <Button
         android:id="@+id/normal_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Normal"
         android:onClick="onNormalPress"
-        app:layout_constraintBottom_toTopOf="@id/activity_button"
+        app:layout_constraintBottom_toTopOf="@id/time_button"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
