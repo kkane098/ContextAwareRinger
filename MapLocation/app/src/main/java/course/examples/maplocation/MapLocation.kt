@@ -72,24 +72,13 @@ class MapLocation : Activity() {
             // on my computer.
         }
 
-        var fields = Arrays.asList(Place.Field.ID,Place.Field.NAME, Place.Field.ADDRESS)
+        var fields = Arrays.asList(Place.Field.ID,Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG)
         var i = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,fields).setCountry("US").build(this)
 
         startActivityForResult(i, AUTOCOMPLETE_REQUEST_CODE)
 
 
-
-            // Create Intent object for starting Google Maps application
-            /*val geoIntent = Intent(
-                    Intent.ACTION_VIEW, Uri
-                    .parse("geo:0,0?q=$address"))
-
-            if (packageManager.resolveActivity(geoIntent, 0) != null) {
-                // Use the Intent to start Google Maps application using Activity.startActivity()
-                startActivity(geoIntent)
-            }*/
-
-            }
+    }
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -97,7 +86,7 @@ class MapLocation : Activity() {
             if(resultCode == RESULT_OK){
                 var p = Autocomplete.getPlaceFromIntent(data!!)
                 //addrText?.setText(p.name + " " + p.address + " "+ p.id)
-                addrText?.setText(p.address)
+                addrText?.setText(p.latLng.toString() + " Address: " + p.address)
             }
         }
     }
