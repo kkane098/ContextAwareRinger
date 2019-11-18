@@ -22,7 +22,9 @@ import androidx.core.app.ComponentActivity
 import androidx.core.app.ComponentActivity.ExtraData
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import java.util.TimeZone
+import androidx.work.*
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -201,26 +203,27 @@ class MainActivity : AppCompatActivity() {
 
     fun onTimePress(view: View) {
         Log.i(TAG, "Pressed time")
-        val startTime = 21L * 60L * 60L * 1000L + 0L * 60L * 1000L
-        val endTime = startTime + 60L * 60L * 1000L
-        val defaultTZ = TimeZone.getDefault().displayName
-        Log.i(TAG, "Default TimeZone is $defaultTZ")
-        var timeFence = TimeFence.inDailyInterval(
-            TimeZone.getDefault(),
-            startTime,
-            endTime
-        )
-        Awareness.getFenceClient(this).updateFences(
-            FenceUpdateRequest.Builder().addFence(
-                TIME_FENCE_KEY,
-                timeFence,
-                mPendingIntent
-            ).build()
-        ).addOnSuccessListener {
-            Log.i(TAG, "Successfully registered fence")
-        }.addOnFailureListener {
-            Log.e(TAG, "Fence could not be registered: $it")
+        val currentDate = Calendar.getInstance()
+        val dueDate = Calendar.getInstance()
+        // to set day of week dueDate.set(Calendar.DAY_OF_WEEK, 1)
+        val hour = 15
+        val min = 53
+        dueDate.set(Calendar.HOUR_OF_DAY, hour)
+        dueDate.set(Calendar.MINUTE, min)
+        dueDate.set(Calendar.SECOND, 0)
+        if (dueDate.before(currentDate)) {
+            dueDate.add(Calendar.HOUR_OF_DAY, 24)
         }
+        val timeDiff = dueDate.timeInMillis - currentDate.timeInMillis
+        val inputData =
+            workDataOf("hour" to hour, "min" to min, "volume" to AudioManager.RINGER_MODE_VIBRATE)
+        val dailyWorkRequest = OneTimeWorkRequestBuilder<VolumeWorker>().setInitialDelay(
+            timeDiff,
+            TimeUnit.MILLISECONDS
+        ).setInputData(inputData).build()
+        Log.i(TAG, "Enqueueing worker")
+        WorkManager.getInstance(this)
+            .enqueueUniqueWork("testWorkName", ExistingWorkPolicy.REPLACE, dailyWorkRequest)
     }
 
     fun onNormalPress(view: View) {
