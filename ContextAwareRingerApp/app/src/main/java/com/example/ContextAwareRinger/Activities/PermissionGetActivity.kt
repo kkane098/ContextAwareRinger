@@ -2,7 +2,7 @@ package com.example.ContextAwareRinger.Activities;
 
 import android.app.Activity;
 import android.os.Bundle
-import com.example.myapplication.R
+import com.example.ContextAwareRinger.R
 
 class PermissionGetActivity : Activity() {
 
