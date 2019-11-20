@@ -7,13 +7,11 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager.widget.ViewPager
+import com.example.ContextAwareRinger.*
 import com.example.ContextAwareRinger.Data.ActivityData
-import com.example.ContextAwareRinger.R
-import com.example.ContextAwareRinger.TabAdapter
-import com.example.ContextAwareRinger.readFromFile
-import com.example.ContextAwareRinger.writeToFile
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.*
 
 //TODO: Change UI to be loading screen that checks permissions
 class MainActivity : FragmentActivity() {
@@ -27,6 +25,8 @@ class MainActivity : FragmentActivity() {
         //
         tabLayout = findViewById(R.id.tabLayout)
         Log.i(TAG, "tabLayout: " + tabLayout.toString() + " " + tabLayout!!.childCount)
+        //val time = getTimeUntilNextTrigger(8, 0, WEEKEND)
+        //Log.i(TAG, "time was $time")
 
         var timeTab = tabLayout!!.newTab().setText("Time")
         var activityTab = tabLayout!!.newTab().setText("Activity")

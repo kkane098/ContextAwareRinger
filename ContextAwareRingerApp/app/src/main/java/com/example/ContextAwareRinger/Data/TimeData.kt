@@ -2,5 +2,10 @@ package com.example.ContextAwareRinger.Data
 
 import java.io.Serializable
 
-//TODO: Figure out how to handle different days of the week / combos
-data class TimeData(val startTime: Long, val endTime: Long, val fenceKey: String, val ringerMode: Int) : Serializable
+data class TimeData(
+    val hour: Int,
+    val min: Int,
+    val day: Int,
+    val workKey: String,
+    val ringerMode: Int
+) : Serializable
