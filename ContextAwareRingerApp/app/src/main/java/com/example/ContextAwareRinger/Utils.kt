@@ -8,11 +8,27 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.example.ContextAwareRinger.Data.ActivityData
+import com.example.ContextAwareRinger.Data.HeadphonesData
+import com.example.ContextAwareRinger.Data.LocationData
+import com.example.ContextAwareRinger.Data.TimeData
 import com.google.android.gms.awareness.Awareness
 import com.google.android.gms.awareness.fence.*
 import java.io.*
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlinx.serialization.*
+import kotlinx.serialization.internal.IntSerializer
+import kotlinx.serialization.internal.StringSerializer
+import kotlinx.serialization.json.*
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
+import java.io.PrintWriter
+
 
 val TAG = "UTILS"
 val FENCE_RECEIVER_ACTION = "com.example.ContextAwareRinger.FENCE_RECEIVER_ACTION"
@@ -25,9 +41,7 @@ val WEEKEND = -3
 //  writeToFile(filesDir.toString() + "/out.tmp", activityData as Object)
 //  val data = readFromFile(filesDir.toString() + "/out.tmp") as ActivityData
 
-//TODO: If we need to write a list or map to files we should create helper methods for that
-
-fun writeToFile(fileName: String?, obj: Object?) {
+/*fun writeToFile(fileName: String?, obj: Object?) {
     try {
         // write object to file
         val fileOut = FileOutputStream(fileName)
@@ -62,7 +76,7 @@ fun readFromFile(fileName: String?): Any? {
         e.printStackTrace()
     }
     return null
-}
+}*/
 
 private fun getPendingIntent(context: Context): PendingIntent {
     val intent = Intent(context, FenceBroadcastReceiver::class.java)
@@ -162,15 +176,15 @@ fun getTimeUntilNextTrigger(hour: Int, min: Int, day: Int): Long {
         WEEKEND -> {
             val dayOfWeek = currentDate.get(Calendar.DAY_OF_WEEK)
             // If today is Mon - Fri, schedule for Sat
-            if(dayOfWeek >= Calendar.MONDAY && dayOfWeek <= Calendar.FRIDAY){
+            if (dayOfWeek >= Calendar.MONDAY && dayOfWeek <= Calendar.FRIDAY) {
                 dueDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
             }
             // If today is Sat and time is in past, schedule for tomorrow
-            if(dayOfWeek == Calendar.SATURDAY && dueDate.before(currentDate)){
+            if (dayOfWeek == Calendar.SATURDAY && dueDate.before(currentDate)) {
                 dueDate.add(Calendar.HOUR_OF_DAY, 24)
             }
             // If today is Sun and time is in past, schedule for Sat
-            if(dayOfWeek == Calendar.SUNDAY && dueDate.before(currentDate)){
+            if (dayOfWeek == Calendar.SUNDAY && dueDate.before(currentDate)) {
                 dueDate.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY)
             }
         }
@@ -193,7 +207,8 @@ fun enqueueTimeWorker(
     min: Int,
     day: Int,
     volume: Int,
-    workKey: String) {
+    workKey: String
+) {
     val timeDiff = getTimeUntilNextTrigger(hour, min, day)
     val inputData =
         workDataOf(
@@ -211,3 +226,105 @@ fun enqueueTimeWorker(
     WorkManager.getInstance(context)
         .enqueueUniqueWork(workKey, ExistingWorkPolicy.REPLACE, volumeWorkRequest)
 }
+
+private fun writeString(context: Context, data: String, fileName: String){
+    try {
+
+        Log.i(TAG, "wrote $data")
+        val fos = context.openFileOutput(fileName, Context.MODE_PRIVATE)
+        val pw = PrintWriter(BufferedWriter(OutputStreamWriter(fos)))
+
+        pw.println(data)
+
+        pw.close()
+
+    } catch (e: FileNotFoundException) {
+        e.printStackTrace()
+    } catch (e: IOException) {
+        e.printStackTrace()
+    } catch (e: ClassNotFoundException) {
+        e.printStackTrace()
+    }
+}
+
+private fun readString(context: Context, fileName: String): String{
+    val fis = context.openFileInput(fileName)
+    val br = BufferedReader(InputStreamReader(fis))
+
+    val jsonListString = br.readLine()
+    Log.i(TAG, "read $jsonListString")
+
+    br.close()
+    return jsonListString
+}
+
+fun writeActivityDataList(context: Context, list: List<ActivityData>, fileName: String) {
+    val json = Json(JsonConfiguration.Stable)
+    val jsonListString = json.stringify(ActivityData.serializer().list, list)
+
+    writeString(context, jsonListString, fileName)
+}
+
+fun readActivityDataList(context: Context, fileName: String): List<ActivityData>{
+    val json = Json(JsonConfiguration.Stable)
+    val jsonListString = readString(context, fileName)
+
+    return json.parse(ActivityData.serializer().list, jsonListString)
+}
+
+fun writeTimeDataList(context: Context, list: List<TimeData>, fileName: String){
+    val json = Json(JsonConfiguration.Stable)
+    val jsonListString = json.stringify(TimeData.serializer().list, list)
+
+    writeString(context, jsonListString, fileName)
+}
+
+fun readTimeDataList(context: Context, fileName: String): List<TimeData>{
+    val json = Json(JsonConfiguration.Stable)
+    val jsonListString = readString(context, fileName)
+
+    return json.parse(TimeData.serializer().list, jsonListString)
+}
+
+fun writeLocationDataList(context: Context, list: List<LocationData>, fileName: String){
+    val json = Json(JsonConfiguration.Stable)
+    val jsonListString = json.stringify(LocationData.serializer().list, list)
+
+    writeString(context, jsonListString, fileName)
+}
+
+fun readLocationDataList(context: Context, fileName: String): List<LocationData>{
+    val json = Json(JsonConfiguration.Stable)
+    val jsonListString = readString(context, fileName)
+
+    return json.parse(LocationData.serializer().list, jsonListString)
+}
+
+fun writeHeadphoneDataList(context: Context, list: List<HeadphonesData>, fileName: String){
+    val json = Json(JsonConfiguration.Stable)
+    val jsonListString = json.stringify(HeadphonesData.serializer().list, list)
+
+    writeString(context, jsonListString, fileName)
+}
+
+fun readHeadphonesDataList(context: Context, fileName: String): List<HeadphonesData>{
+    val json = Json(JsonConfiguration.Stable)
+    val jsonListString = readString(context, fileName)
+
+    return json.parse(HeadphonesData.serializer().list, jsonListString)
+}
+
+fun writeVolumeMap(context: Context, map : Map<String, Int>, fileName: String){
+    val json = Json(JsonConfiguration.Stable)
+    val jsonMapString = json.stringify((StringSerializer to IntSerializer).map, map)
+
+    writeString(context, jsonMapString, fileName)
+}
+
+fun readVolumeMap(context: Context, fileName: String): Map<String, Int>{
+    val json = Json(JsonConfiguration.Stable)
+    val jsonMapString = readString(context, fileName)
+
+    return json.parse((StringSerializer to IntSerializer).map, jsonMapString)
+}
+

@@ -1,11 +1,12 @@
 package com.example.ContextAwareRinger.Data
 
-import java.io.Serializable
+import kotlinx.serialization.*
 
+@Serializable
 data class LocationData(
     val lat: Double,
     val lng: Double,
     val radius: Double,
     val fenceKey: String,
     val ringerMode: Int
-) : Serializable
+)
