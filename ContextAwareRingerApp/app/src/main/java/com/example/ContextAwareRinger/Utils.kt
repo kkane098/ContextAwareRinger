@@ -14,7 +14,6 @@ import com.example.ContextAwareRinger.Data.LocationData
 import com.example.ContextAwareRinger.Data.TimeData
 import com.google.android.gms.awareness.Awareness
 import com.google.android.gms.awareness.fence.*
-import java.io.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlinx.serialization.*
@@ -251,11 +250,11 @@ private fun readString(context: Context, fileName: String): String{
     val fis = context.openFileInput(fileName)
     val br = BufferedReader(InputStreamReader(fis))
 
-    val jsonListString = br.readLine()
-    Log.i(TAG, "read $jsonListString")
+    val jsonString = br.readLine()
+    Log.i(TAG, "read $jsonString")
 
     br.close()
-    return jsonListString
+    return jsonString
 }
 
 fun writeActivityDataList(context: Context, list: List<ActivityData>, fileName: String) {
