@@ -14,7 +14,7 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
-//TODO: Change UI to be loading screen that checks permissions
+// Change UI to be loading screen that checks permissions
 class MainActivity : FragmentActivity() {
     var tabLayout: TabLayout? = null
     val TAG = "MAIN_ACTIVITY"
