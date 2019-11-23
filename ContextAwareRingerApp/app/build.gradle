@@ -9,6 +9,7 @@ apply plugin: 'kotlinx-serialization'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
+
     defaultConfig {
         applicationId "com.example.myapplication"
         minSdkVersion 26
@@ -35,6 +36,8 @@ android {
 }
 
 dependencies {
+    //noinspection GradleCompatible
+    implementation 'com.android.support:design:27.1.1'
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.android.gms:play-services-awareness:17.1.0'
