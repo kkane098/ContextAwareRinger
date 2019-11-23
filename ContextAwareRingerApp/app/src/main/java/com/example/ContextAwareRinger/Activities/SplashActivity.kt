@@ -14,7 +14,6 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -26,10 +25,7 @@ class SplashActivity : AppCompatActivity() {
                 Intent(this@SplashActivity, MainActivity::class.java)
             }
 
-        Handler().postDelayed({
-            /* Create an Intent that will start MainActivity. */
-            startActivity(intent)
-            finish()
-        }, 1000)
+        startActivity(intent)
+        finish()
     }
 }
