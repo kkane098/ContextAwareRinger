@@ -3,4 +3,22 @@
     <string name="dnd_perm_description">To use this app, you must allow it to modify your do not disturb settings.  To do so, click the button below and toggle the setting for Context Aware Ringer.</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
+    <string name="enter_title_name">Enter title name</string>
+    <string name="low_rating">1</string>
+    <string name="add_title">Add Title</string>
+    <string name="titles_string">Titles</string>
+    <string name="enter_authors_name_string">Enter author\'s name:</string>
+    <string name="add_string">Add</string>
+    <string name="authors_string">Authors</string>
+    <string name="tap_on_an_author_string">Tap on an Author to add and view titles</string>
+    <string name="enter_name_hint_string">Enter name</string>
+    <string name="update_string">Update</string>
+    <string name="delete_string">Delete</string>
+    <array name="radius">
+        <item name="1 Mile">America</item>
+        <item name="5 Miles">France</item>
+        <item name="10 Miles">Spain</item>
+        <item name="25 Miles">Columbia</item>
+        <item name="50 Miles">Russia</item>
+    </array>
 </resources>

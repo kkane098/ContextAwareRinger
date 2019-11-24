@@ -33,6 +33,7 @@ class DNDPermissionActivity : AppCompatActivity() {
 
 
     fun openSettings(view : View){
+
         val intent = Intent(
             Settings
                 .ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS
