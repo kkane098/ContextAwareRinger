@@ -1,6 +1,8 @@
 package com.example.ContextAwareRinger.Activities;
 
+import android.app.Activity.RESULT_OK
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.os.Build
@@ -148,26 +150,24 @@ class LocationsActivity : Fragment(){
         // Process text for network transmission
 
         if(!Places.isInitialized()){
-            Places.initialize(context!!,"AIzaSyCHdq980kiy104lTBlpPJNAcZjzRHj3IcI")
-            //Places.initialize(this@MapLocation,"AIzaSyAWn7tc3sUCiSXHFyKqUvJs-ooZfRAnSO4") // Restricted key
-            // The restricted key only works on android devices with course.examples.maplocation package
-            // on my computer.
+            Places.initialize(context!!,"AIzaSyDOSplxleMLGCL0d6qfpkBwrt8x_vDGadY")
         }
 
-        var fields = Arrays.asList(Place.Field.ID,Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG)
+        var fields = listOf(Place.Field.ID,Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG)
         var i = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,fields).setCountry("US").build(context!!)
 
+        Log.i(TAG, "Starting place autocomplete")
         startActivityForResult(i, AUTOCOMPLETE_REQUEST_CODE)
-
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == AUTOCOMPLETE_REQUEST_CODE){
+            Log.i(TAG, "Activity finished")
             if(resultCode == RESULT_OK){
                 var p = Autocomplete.getPlaceFromIntent(data!!)
                 //addrText?.setText(p.name + " " + p.address + " "+ p.id)
                 //addrText?.setText(p.latLng.toString() + " Address: " + p.address)
+                Log.i(TAG, p.name)
             }
         }
     }
