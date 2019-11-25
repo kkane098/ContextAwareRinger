@@ -81,7 +81,7 @@ class LocationsActivity : Fragment(){
             }
 
             //Extract the selected volume setting if it was selected
-            var selected : RadioButton? = null
+            var selected: RadioButton? = null
             var ringerMode = -1
 
             //Ensure that there is a radio button selected

@@ -23,7 +23,7 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //
+        //TODO: Load map and pass it into fragments
         tabLayout = findViewById(R.id.tabLayout)
         Log.i(TAG, "tabLayout: " + tabLayout.toString() + " " + tabLayout!!.childCount)
         //val time = getTimeUntilNextTrigger(8, 0, WEEKEND)
