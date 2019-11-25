@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.os.Build
-import android.os.Bundle;
+import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,13 +17,20 @@ import androidx.fragment.app.Fragment
 import com.example.ContextAwareRinger.Data.LocationData
 import com.example.ContextAwareRinger.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.model.TypeFilter
+import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import java.util.*
 
 class LocationsActivity : Fragment(){
 
     var TAG = "LocationActivity"
     var floatingActionButton : FloatingActionButton? = null
     val LOCATION_PERMISSION_REQUEST = 1
+    val AUTOCOMPLETE_REQUEST_CODE = 2
 
     private fun needsLocationRuntimePermission(): Boolean {
         // Prior to Android 10, only needed FINE_LOCATION, but now also need BACKGROUND_LOCATION
@@ -63,13 +70,17 @@ class LocationsActivity : Fragment(){
         b.show()
 
         //Get the UI components that contain information used to create a LocationData object
-        val buttonUpdate = dialogView.findViewById<Button>(R.id.buttonUpdateAuthor)
+        val buttonSubmit = dialogView.findViewById<Button>(R.id.buttonSubmit)
         val locationTitle : EditText? = dialogView.findViewById(R.id.locationTitle)
         val radiusEditText : EditText? = dialogView.findViewById(R.id.radiusEditText)
         val radioGroup : RadioGroup = dialogView.findViewById(R.id.volumeRadioGroup)
+        val buttonLocation : Button = dialogView.findViewById(R.id.place_autocomplete_button)
 
+        buttonLocation.setOnClickListener {
+            processClick()
+        }
         //Set the onClick method for the submit button. It should not submit unless there are values for all a
-        buttonUpdate.setOnClickListener {
+        buttonSubmit.setOnClickListener {
 
             val title = locationTitle?.text.toString().trim { it <= ' ' }
 
@@ -129,6 +140,36 @@ class LocationsActivity : Fragment(){
             }
         }
 
+    }
+
+    private fun processClick() {
+
+
+        // Process text for network transmission
+
+        if(!Places.isInitialized()){
+            Places.initialize(context!!,"AIzaSyCHdq980kiy104lTBlpPJNAcZjzRHj3IcI")
+            //Places.initialize(this@MapLocation,"AIzaSyAWn7tc3sUCiSXHFyKqUvJs-ooZfRAnSO4") // Restricted key
+            // The restricted key only works on android devices with course.examples.maplocation package
+            // on my computer.
+        }
+
+        var fields = Arrays.asList(Place.Field.ID,Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG)
+        var i = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,fields).setCountry("US").build(context!!)
+
+        startActivityForResult(i, AUTOCOMPLETE_REQUEST_CODE)
+
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == AUTOCOMPLETE_REQUEST_CODE){
+            if(resultCode == RESULT_OK){
+                var p = Autocomplete.getPlaceFromIntent(data!!)
+                //addrText?.setText(p.name + " " + p.address + " "+ p.id)
+                //addrText?.setText(p.latLng.toString() + " Address: " + p.address)
+            }
+        }
     }
 
     private fun createLocation(title:String, radius:Double, latitude:Double, longitude:Double, fenceKey:String, ringerMode:Int) : LocationData {
