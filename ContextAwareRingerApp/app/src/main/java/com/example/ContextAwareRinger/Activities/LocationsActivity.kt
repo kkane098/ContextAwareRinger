@@ -1,7 +1,9 @@
 package com.example.ContextAwareRinger.Activities;
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle;
 import android.text.TextUtils
 import android.util.Log
@@ -10,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import com.example.ContextAwareRinger.Data.LocationData
 import com.example.ContextAwareRinger.R
@@ -20,6 +23,17 @@ class LocationsActivity : Fragment(){
 
     var TAG = "LocationActivity"
     var floatingActionButton : FloatingActionButton? = null
+    val LOCATION_PERMISSION_REQUEST = 1
+
+    private fun needsLocationRuntimePermission(): Boolean {
+        // Prior to Android 10, only needed FINE_LOCATION, but now also need BACKGROUND_LOCATION
+        return when {
+            Build.VERSION.SDK_INT >= 29 -> checkSelfPermission(context!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(context!!, android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> checkSelfPermission(context!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            else -> false
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -95,11 +109,23 @@ class LocationsActivity : Fragment(){
 
             //If all the data fields are filled in, submit the data
             if (!TextUtils.isEmpty(title) && !radiusEditText?.text.isNullOrEmpty() && radioGroup.checkedRadioButtonId != -1) {
-
-                b.dismiss()
-                //TODO: Add the new locationdata to the list view
-                //TODO: Store location data in the file system
-                val data : LocationData = createLocation(title, radius, latitude, longitude, fenceKey, ringerMode)
+                if(needsLocationRuntimePermission()){
+                    Log.i(TAG, "requesting permissions")
+                    requestPermissions(
+                        arrayOf(
+                            android.Manifest.permission.ACCESS_FINE_LOCATION,
+                            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                        ), LOCATION_PERMISSION_REQUEST
+                    )
+                }
+                else {
+                    //TODO: Add the new locationdata to the list view
+                    //TODO: Store location data in the file system
+                    Log.i(TAG, "submitting")
+                    b.dismiss()
+                    val data: LocationData =
+                        createLocation(title, radius, latitude, longitude, fenceKey, ringerMode)
+                }
             }
         }
 
