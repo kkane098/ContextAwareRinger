@@ -226,6 +226,10 @@ fun enqueueTimeWorker(
         .enqueueUniqueWork(workKey, ExistingWorkPolicy.REPLACE, volumeWorkRequest)
 }
 
+fun removeTimeWorker(context: Context, workKey: String){
+    WorkManager.getInstance(context).cancelUniqueWork(workKey)
+}
+
 private fun writeString(context: Context, data: String, fileName: String){
     try {
 
@@ -266,9 +270,13 @@ fun writeActivityDataList(context: Context, list: List<ActivityData>, fileName: 
 
 fun readActivityDataList(context: Context, fileName: String): List<ActivityData>{
     val json = Json(JsonConfiguration.Stable)
-    val jsonListString = readString(context, fileName)
-
-    return json.parse(ActivityData.serializer().list, jsonListString)
+    return try {
+        val jsonListString = readString(context, fileName)
+        json.parse(ActivityData.serializer().list, jsonListString)
+    }
+    catch (e: FileNotFoundException){
+        listOf()
+    }
 }
 
 fun writeTimeDataList(context: Context, list: List<TimeData>, fileName: String){
@@ -280,9 +288,13 @@ fun writeTimeDataList(context: Context, list: List<TimeData>, fileName: String){
 
 fun readTimeDataList(context: Context, fileName: String): List<TimeData>{
     val json = Json(JsonConfiguration.Stable)
-    val jsonListString = readString(context, fileName)
-
-    return json.parse(TimeData.serializer().list, jsonListString)
+    return try {
+        val jsonListString = readString(context, fileName)
+        json.parse(TimeData.serializer().list, jsonListString)
+    }
+    catch (e: FileNotFoundException){
+        listOf()
+    }
 }
 
 fun writeLocationDataList(context: Context, list: List<LocationData>, fileName: String){
@@ -294,9 +306,13 @@ fun writeLocationDataList(context: Context, list: List<LocationData>, fileName: 
 
 fun readLocationDataList(context: Context, fileName: String): List<LocationData>{
     val json = Json(JsonConfiguration.Stable)
-    val jsonListString = readString(context, fileName)
-
-    return json.parse(LocationData.serializer().list, jsonListString)
+    return try {
+        val jsonListString = readString(context, fileName)
+        json.parse(LocationData.serializer().list, jsonListString)
+    }
+    catch (e: FileNotFoundException){
+        listOf()
+    }
 }
 
 fun writeHeadphoneDataList(context: Context, list: List<HeadphonesData>, fileName: String){
@@ -308,9 +324,13 @@ fun writeHeadphoneDataList(context: Context, list: List<HeadphonesData>, fileNam
 
 fun readHeadphonesDataList(context: Context, fileName: String): List<HeadphonesData>{
     val json = Json(JsonConfiguration.Stable)
-    val jsonListString = readString(context, fileName)
-
-    return json.parse(HeadphonesData.serializer().list, jsonListString)
+    return try {
+        val jsonListString = readString(context, fileName)
+        json.parse(HeadphonesData.serializer().list, jsonListString)
+    }
+    catch (e: FileNotFoundException){
+        listOf()
+    }
 }
 
 fun writeVolumeMap(context: Context, map : Map<String, Int>, fileName: String){
@@ -322,8 +342,13 @@ fun writeVolumeMap(context: Context, map : Map<String, Int>, fileName: String){
 
 fun readVolumeMap(context: Context, fileName: String): Map<String, Int>{
     val json = Json(JsonConfiguration.Stable)
-    val jsonMapString = readString(context, fileName)
 
-    return json.parse((StringSerializer to IntSerializer).map, jsonMapString)
+    return try {
+        val jsonMapString = readString(context, fileName)
+        json.parse((StringSerializer to IntSerializer).map, jsonMapString)
+    }
+    catch (e: FileNotFoundException){
+        mapOf()
+    }
 }
 

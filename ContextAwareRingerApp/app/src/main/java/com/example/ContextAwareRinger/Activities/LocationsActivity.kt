@@ -27,31 +27,62 @@ import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import java.util.*
 
-class LocationsActivity : Fragment(){
+class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragment() {
 
     var TAG = "LocationActivity"
-    var floatingActionButton : FloatingActionButton? = null
+    var floatingActionButton: FloatingActionButton? = null
     val LOCATION_PERMISSION_REQUEST = 1
     val AUTOCOMPLETE_REQUEST_CODE = 2
 
     private fun needsLocationRuntimePermission(): Boolean {
         // Prior to Android 10, only needed FINE_LOCATION, but now also need BACKGROUND_LOCATION
         return when {
-            Build.VERSION.SDK_INT >= 29 -> checkSelfPermission(context!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                    checkSelfPermission(context!!, android.Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> checkSelfPermission(context!!, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            Build.VERSION.SDK_INT >= 29 -> checkSelfPermission(
+                context!!,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(
+                        context!!,
+                        android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> checkSelfPermission(
+                context!!,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
             else -> false
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == LOCATION_PERMISSION_REQUEST) {
+            // Checks if either both permissions are granted or FINE_LOCATION is granted and the device is running an Android version prior to 10
+            if (!((grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) || (grantResults[0] == PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT < 29))) {
+                Toast.makeText(
+                    context!!,
+                    "You need to grant ALL location permissions for this app!",
+                    Toast.LENGTH_LONG
+                )
+                    .show()
+            }
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         val rootView = inflater!!.inflate(R.layout.location, container, false)
         floatingActionButton = rootView.findViewById(R.id.locationFAB)
 
+        Log.i(TAG, "Adding onclick listener to fab")
         //Set the onclick for the floating button to open a dialog box
         floatingActionButton?.setOnClickListener {
-            Log.i(TAG, "Adding onclick listener to fab")
             showAddDialog()
         }
 
@@ -73,10 +104,10 @@ class LocationsActivity : Fragment(){
 
         //Get the UI components that contain information used to create a LocationData object
         val buttonSubmit = dialogView.findViewById<Button>(R.id.buttonSubmit)
-        val locationTitle : EditText? = dialogView.findViewById(R.id.locationTitle)
-        val radiusEditText : EditText? = dialogView.findViewById(R.id.radiusEditText)
-        val radioGroup : RadioGroup = dialogView.findViewById(R.id.volumeRadioGroup)
-        val buttonLocation : Button = dialogView.findViewById(R.id.place_autocomplete_button)
+        val locationTitle: EditText? = dialogView.findViewById(R.id.locationTitle)
+        val radiusEditText: EditText? = dialogView.findViewById(R.id.radiusEditText)
+        val radioGroup: RadioGroup = dialogView.findViewById(R.id.volumeRadioGroup)
+        val buttonLocation: Button = dialogView.findViewById(R.id.place_autocomplete_button)
 
         buttonLocation.setOnClickListener {
             processClick()
@@ -87,7 +118,7 @@ class LocationsActivity : Fragment(){
             val title = locationTitle?.text.toString().trim { it <= ' ' }
 
             //Default radius to .5 miles
-            var radius = .5
+            var radius = 200.0
             //Update radius if user input exists
             if (!radiusEditText?.text.isNullOrEmpty()) {
                 radius = java.lang.Double.parseDouble(radiusEditText?.text.toString())
@@ -117,12 +148,11 @@ class LocationsActivity : Fragment(){
             val latitude = 0.0
             val longitude = 0.0
 
-            //TODO: Generate fence key
-            val fenceKey = ""
+            val fenceKey = UUID.randomUUID().toString()
 
             //If all the data fields are filled in, submit the data
             if (!TextUtils.isEmpty(title) && !radiusEditText?.text.isNullOrEmpty() && radioGroup.checkedRadioButtonId != -1) {
-                if(needsLocationRuntimePermission()){
+                if (needsLocationRuntimePermission()) {
                     Log.i(TAG, "requesting permissions")
                     requestPermissions(
                         arrayOf(
@@ -130,8 +160,7 @@ class LocationsActivity : Fragment(){
                             android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
                         ), LOCATION_PERMISSION_REQUEST
                     )
-                }
-                else {
+                } else {
                     //TODO: Add the new locationdata to the list view
                     //TODO: Store location data in the file system
                     Log.i(TAG, "submitting")
@@ -149,21 +178,24 @@ class LocationsActivity : Fragment(){
 
         // Process text for network transmission
 
-        if(!Places.isInitialized()){
-            Places.initialize(context!!,"AIzaSyDOSplxleMLGCL0d6qfpkBwrt8x_vDGadY")
+        if (!Places.isInitialized()) {
+            Places.initialize(context!!, "AIzaSyDOSplxleMLGCL0d6qfpkBwrt8x_vDGadY")
         }
 
-        var fields = listOf(Place.Field.ID,Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG)
-        var i = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN,fields).setCountry("US").build(context!!)
+        var fields =
+            listOf(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG)
+        var i =
+            Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields).setCountry("US")
+                .build(context!!)
 
         Log.i(TAG, "Starting place autocomplete")
         startActivityForResult(i, AUTOCOMPLETE_REQUEST_CODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode == AUTOCOMPLETE_REQUEST_CODE){
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
             Log.i(TAG, "Activity finished")
-            if(resultCode == RESULT_OK){
+            if (resultCode == RESULT_OK) {
                 var p = Autocomplete.getPlaceFromIntent(data!!)
                 //addrText?.setText(p.name + " " + p.address + " "+ p.id)
                 //addrText?.setText(p.latLng.toString() + " Address: " + p.address)
@@ -172,8 +204,18 @@ class LocationsActivity : Fragment(){
         }
     }
 
-    private fun createLocation(title:String, radius:Double, latitude:Double, longitude:Double, fenceKey:String, ringerMode:Int) : LocationData {
-        Log.i(TAG, "Location created with data: \n " + " Title: " + title + " Radius: " + radius +  " Latitude: " + latitude + " Longitude: " + longitude + " Fence key: " + fenceKey + " ringerMode: " + ringerMode)
+    private fun createLocation(
+        title: String,
+        radius: Double,
+        latitude: Double,
+        longitude: Double,
+        fenceKey: String,
+        ringerMode: Int
+    ): LocationData {
+        Log.i(
+            TAG,
+            "Location created with data: \n " + " Title: " + title + " Radius: " + radius + " Latitude: " + latitude + " Longitude: " + longitude + " Fence key: " + fenceKey + " ringerMode: " + ringerMode
+        )
         return LocationData(latitude, longitude, radius, fenceKey, ringerMode)
     }
 }

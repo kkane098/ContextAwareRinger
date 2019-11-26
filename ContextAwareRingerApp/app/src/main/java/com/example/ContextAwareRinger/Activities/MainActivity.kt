@@ -23,24 +23,8 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //TODO: Load map and pass it into fragments
         tabLayout = findViewById(R.id.tabLayout)
         Log.i(TAG, "tabLayout: " + tabLayout.toString() + " " + tabLayout!!.childCount)
-        //val time = getTimeUntilNextTrigger(8, 0, WEEKEND)
-        //Log.i(TAG, "time was $time")
-        /* val activityData1 = ActivityData(1, "key1", AudioManager.RINGER_MODE_SILENT)
-        val activityData2 = ActivityData(2, "key2", AudioManager.RINGER_MODE_VIBRATE)
-        val activityDataList = listOf(activityData1, activityData2)
-        writeActivityDataList(this, activityDataList, "testFile.txt")
-        val readList = readActivityDataList(this, "testFile.txt")
-        val size = readList.size
-        Log.i(TAG, "size was $size")
-        Log.i(TAG, readList[0].toString())
-        Log.i(TAG, readList[1].toString())
-        val volumeMap = mapOf("key1" to AudioManager.RINGER_MODE_SILENT, "key2" to AudioManager.RINGER_MODE_VIBRATE)
-        writeVolumeMap(this, volumeMap, "testMapFile.txt")
-        val readMap = readVolumeMap(this, "testMapFile.txt")
-        Log.i(TAG, readMap.toString()) */
 
         var timeTab = tabLayout!!.newTab().setText("Time")
         var activityTab = tabLayout!!.newTab().setText("Activity")
@@ -53,7 +37,10 @@ class MainActivity : FragmentActivity() {
         tabLayout!!.addTab(locationTab)
         tabLayout!!.addTab(headphonesTab)
 
-        val fragmentAdapter = TabAdapter(supportFragmentManager)
+        val volumeMap = readVolumeMap(this, "volumeMap.txt").toMutableMap()
+        Log.i(TAG, "map was $volumeMap")
+
+        val fragmentAdapter = TabAdapter(supportFragmentManager, volumeMap)
         viewpage = findViewById(R.id.viewpager_main)
         viewpage!!.adapter = fragmentAdapter
 

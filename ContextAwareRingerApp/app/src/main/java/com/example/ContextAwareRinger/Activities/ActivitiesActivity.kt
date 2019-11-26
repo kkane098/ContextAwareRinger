@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import com.example.ContextAwareRinger.R
 
 
-class ActivitiesActivity : Fragment(){
+class ActivitiesActivity(private val volumeMap: MutableMap<String, Int>) : Fragment(){
     //TODO: look into making this class a fragment
     //TODO: Add plus button to UI
     //TODO: Change listview to cardview

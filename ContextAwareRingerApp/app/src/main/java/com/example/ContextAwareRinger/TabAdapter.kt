@@ -10,17 +10,17 @@ import com.example.ContextAwareRinger.Activities.HeadphonesActivity
 import com.example.ContextAwareRinger.Activities.LocationsActivity
 import com.example.ContextAwareRinger.Activities.TimeActivity
 
-class TabAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+class TabAdapter(fm: FragmentManager, private val volumeMap: MutableMap<String, Int>) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> {
                 TimeActivity()
             }
-            1 -> ActivitiesActivity()
-            2-> LocationsActivity()
+            1 -> ActivitiesActivity(volumeMap)
+            2-> LocationsActivity(volumeMap)
             else -> {
-                return HeadphonesActivity()
+                return HeadphonesActivity(volumeMap)
             }
         }
     }
