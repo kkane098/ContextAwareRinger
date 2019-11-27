@@ -1,5 +1,6 @@
 package com.example.ContextAwareRinger.Activities;
 
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -18,6 +19,7 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import com.example.ContextAwareRinger.*
 import com.example.ContextAwareRinger.Data.LocationData
+import com.example.ContextAwareRinger.Data.LocationDataListAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -37,7 +39,8 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
     var mLat: Double? = null
     var mLong: Double? = null
     lateinit var mLocationList: MutableList<LocationData>
-
+    internal lateinit var  locationListView: ListView
+    internal lateinit var locationAdapter: LocationDataListAdapter
     private fun needsLocationRuntimePermission(): Boolean {
         // Prior to Android 10, only needed FINE_LOCATION, but now also need BACKGROUND_LOCATION
         return when {
@@ -75,6 +78,10 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -83,6 +90,11 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         // Inflate the layout for this fragment
         val rootView = inflater!!.inflate(R.layout.location, container, false)
         floatingActionButton = rootView.findViewById(R.id.locationFAB)
+
+        locationListView = rootView.findViewById(R.id.ListViewLocation) as ListView
+        locationAdapter = LocationDataListAdapter(context!!)
+
+        locationListView.adapter = locationAdapter
 
         mLocationList = readLocationDataList(context!!, LOCATION_LIST_FILENAME).toMutableList()
         Log.i(TAG, "list was $mLocationList")
@@ -94,6 +106,22 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         }
 
         return rootView
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+    }
+    // Need to load the goddamn listViewAdapter
+    override fun onResume() {
+        super.onResume()
+        if(locationAdapter.count == 0) {
+            val locList = readLocationDataList(context!!, LOCATION_LIST_FILENAME)
+
+            for (i in locList) {
+                locationAdapter.add(i)
+            }
+        }
     }
 
     private fun showAddDialog() {
@@ -168,11 +196,15 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
                         ), LOCATION_PERMISSION_REQUEST
                     )
                 } else {
-                    //TODO: Add the new locationdata to the list view
+
                     //TODO: Store location data in the file system
                     Log.i(TAG, "submitting")
                     b.dismiss()
                     createLocation(title, radius, mLat!!, mLong!!, fenceKey, ringerMode)
+
+                    //TODO: Add the new locationdata to the list view
+                    //listViewLocations.adapter = LocationDataListAdapter(this@LocationsActivity, mLocationList)
+
                 }
             } else {
                 Toast.makeText(
@@ -232,6 +264,9 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
 
         mLocationList.add(data)
         writeLocationDataList(context!!, mLocationList, LOCATION_LIST_FILENAME)
+
+        // Doing adapter stuff here
+        locationAdapter.add(data)
 
         volumeMap[fenceKey] = ringerMode
         writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
