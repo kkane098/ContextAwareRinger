@@ -11,6 +11,13 @@
         android:layout_height="wrap_content" />
 
     <TextView
+        android:text="Place Name"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+        android:id="@+id/textPlaceName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
         android:text="Subtitle"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:id="@+id/textLocationSubtitle"

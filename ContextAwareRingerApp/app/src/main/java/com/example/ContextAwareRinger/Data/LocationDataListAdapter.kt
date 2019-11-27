@@ -75,6 +75,7 @@ class LocationDataListAdapter (private val mContext: Context) : BaseAdapter() {
             newView = LayoutInflater.from(mContext).inflate(R.layout.location_item,parent,false)
             newView.tag = viewHolder
             viewHolder.mTitleView = newView.findViewById(R.id.textLocationName)
+            viewHolder.mPlaceNameView = newView.findViewById(R.id.textPlaceName)
             viewHolder.mPriorityView = newView.findViewById(R.id.textLocationSubtitle)
 
         } else {
@@ -89,8 +90,9 @@ class LocationDataListAdapter (private val mContext: Context) : BaseAdapter() {
         // in the layout file
 
         // TODO - Display Title in TextView
-        viewHolder.mTitleView?.text = "Name:  " + locationItem.name
+        viewHolder.mTitleView?.text = locationItem.name
 
+        viewHolder.mPlaceNameView?.text = locationItem.placeName
 
         // TODO - Display Priority in a TextView
         var ringer = ""
@@ -115,6 +117,7 @@ class LocationDataListAdapter (private val mContext: Context) : BaseAdapter() {
         var position: Int = 0
         var mItemLayout: RelativeLayout? = null
         var mTitleView: TextView? = null
+        var mPlaceNameView: TextView? = null
         var mPriorityView: TextView? = null
 
     }

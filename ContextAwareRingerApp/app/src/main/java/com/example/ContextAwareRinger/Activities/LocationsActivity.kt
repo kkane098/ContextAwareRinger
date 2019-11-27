@@ -38,6 +38,7 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
 
     var mLat: Double? = null
     var mLong: Double? = null
+    var mPlaceName: String? = null
     lateinit var mLocationList: MutableList<LocationData>
     internal lateinit var  locationListView: ListView
     internal lateinit var locationAdapter: LocationDataListAdapter
@@ -112,6 +113,7 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         super.onStart()
 
     }
+
     // Need to load the goddamn listViewAdapter
     override fun onResume() {
         super.onResume()
@@ -128,9 +130,10 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
 
         Log.i(TAG, "Adding location")
 
-        //Reset mLat and mLong
+        //Reset mLat, mLong, and mPlaceName
         mLat = null
         mLong = null
+        mPlaceName = null
 
         //Make the Dialog visible
         val dialogBuilder = AlertDialog.Builder(activity as Context)
@@ -186,7 +189,7 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
             val fenceKey = UUID.randomUUID().toString()
 
             //If all the data fields are filled in, submit the data
-            if (!TextUtils.isEmpty(title) && !radiusEditText?.text.isNullOrEmpty() && radioGroup.checkedRadioButtonId != -1 && mLat != null && mLong != null) {
+            if (!TextUtils.isEmpty(title) && !radiusEditText?.text.isNullOrEmpty() && radioGroup.checkedRadioButtonId != -1 && mLat != null && mLong != null && mPlaceName != null) {
                 if (needsLocationRuntimePermission()) {
                     Log.i(TAG, "requesting permissions")
                     requestPermissions(
@@ -196,15 +199,9 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
                         ), LOCATION_PERMISSION_REQUEST
                     )
                 } else {
-
-                    //TODO: Store location data in the file system
                     Log.i(TAG, "submitting")
                     b.dismiss()
-                    createLocation(title, radius, mLat!!, mLong!!, fenceKey, ringerMode)
-
-                    //TODO: Add the new locationdata to the list view
-                    //listViewLocations.adapter = LocationDataListAdapter(this@LocationsActivity, mLocationList)
-
+                    createLocation(title, mPlaceName!!, radius, mLat!!, mLong!!, fenceKey, ringerMode)
                 }
             } else {
                 Toast.makeText(
@@ -237,19 +234,19 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
             Log.i(TAG, "Activity finished")
             if (resultCode == RESULT_OK) {
                 var p = Autocomplete.getPlaceFromIntent(data!!)
-                //addrText?.setText(p.name + " " + p.address + " "+ p.id)
-                //addrText?.setText(p.latLng.toString() + " Address: " + p.address)
 
                 mLat = p.latLng?.latitude
                 mLong = p.latLng?.longitude
+                mPlaceName = p.name
 
-                Toast.makeText(context!!, "You chose " + p.name, Toast.LENGTH_LONG).show()
+                Toast.makeText(context!!, "You chose $mPlaceName", Toast.LENGTH_LONG).show()
             }
         }
     }
 
     private fun createLocation(
         title: String,
+        placeName: String,
         radius: Double,
         latitude: Double,
         longitude: Double,
@@ -260,7 +257,7 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
             TAG,
             "Location created with data: \n  Title: $title Radius: $radius Latitude: $latitude Longitude: $longitude Fence key: $fenceKey ringerMode: $ringerMode"
         )
-        val data = LocationData(title, latitude, longitude, radius, fenceKey, ringerMode)
+        val data = LocationData(title, placeName, latitude, longitude, radius, fenceKey, ringerMode)
 
         mLocationList.add(data)
         writeLocationDataList(context!!, mLocationList, LOCATION_LIST_FILENAME)
