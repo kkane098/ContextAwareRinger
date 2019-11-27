@@ -34,6 +34,8 @@ val FENCE_RECEIVER_ACTION = "com.example.ContextAwareRinger.FENCE_RECEIVER_ACTIO
 val DAILY = -1
 val WEEKDAY = -2
 val WEEKEND = -3
+val VOLUME_MAP_FILENAME = "volumeMap.txt"
+val LOCATION_LIST_FILENAME = "locationList.txt"
 
 //Example usage of these functions, the following code will write an object to a file then read it back:
 //  val activityData = ActivityData(1, "test", 1)

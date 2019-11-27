@@ -37,7 +37,7 @@ class MainActivity : FragmentActivity() {
         tabLayout!!.addTab(locationTab)
         tabLayout!!.addTab(headphonesTab)
 
-        val volumeMap = readVolumeMap(this, "volumeMap.txt").toMutableMap()
+        val volumeMap = readVolumeMap(this, VOLUME_MAP_FILENAME).toMutableMap()
         Log.i(TAG, "map was $volumeMap")
 
         val fragmentAdapter = TabAdapter(supportFragmentManager, volumeMap)

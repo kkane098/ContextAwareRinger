@@ -16,8 +16,8 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
+import com.example.ContextAwareRinger.*
 import com.example.ContextAwareRinger.Data.LocationData
-import com.example.ContextAwareRinger.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -33,6 +33,10 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
     var floatingActionButton: FloatingActionButton? = null
     val LOCATION_PERMISSION_REQUEST = 1
     val AUTOCOMPLETE_REQUEST_CODE = 2
+
+    var mLat: Double? = null
+    var mLong: Double? = null
+    lateinit var mLocationList: MutableList<LocationData>
 
     private fun needsLocationRuntimePermission(): Boolean {
         // Prior to Android 10, only needed FINE_LOCATION, but now also need BACKGROUND_LOCATION
@@ -80,6 +84,9 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         val rootView = inflater!!.inflate(R.layout.location, container, false)
         floatingActionButton = rootView.findViewById(R.id.locationFAB)
 
+        mLocationList = readLocationDataList(context!!, LOCATION_LIST_FILENAME).toMutableList()
+        Log.i(TAG, "list was $mLocationList")
+
         Log.i(TAG, "Adding onclick listener to fab")
         //Set the onclick for the floating button to open a dialog box
         floatingActionButton?.setOnClickListener {
@@ -92,6 +99,10 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
     private fun showAddDialog() {
 
         Log.i(TAG, "Adding location")
+
+        //Reset mLat and mLong
+        mLat = null
+        mLong = null
 
         //Make the Dialog visible
         val dialogBuilder = AlertDialog.Builder(activity as Context)
@@ -144,14 +155,10 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
                 }
             }
 
-            //TODO: Add latitude and longitude to the ui, collect them into variables
-            val latitude = 0.0
-            val longitude = 0.0
-
             val fenceKey = UUID.randomUUID().toString()
 
             //If all the data fields are filled in, submit the data
-            if (!TextUtils.isEmpty(title) && !radiusEditText?.text.isNullOrEmpty() && radioGroup.checkedRadioButtonId != -1) {
+            if (!TextUtils.isEmpty(title) && !radiusEditText?.text.isNullOrEmpty() && radioGroup.checkedRadioButtonId != -1 && mLat != null && mLong != null) {
                 if (needsLocationRuntimePermission()) {
                     Log.i(TAG, "requesting permissions")
                     requestPermissions(
@@ -165,19 +172,20 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
                     //TODO: Store location data in the file system
                     Log.i(TAG, "submitting")
                     b.dismiss()
-                    val data: LocationData =
-                        createLocation(title, radius, latitude, longitude, fenceKey, ringerMode)
+                    createLocation(title, radius, mLat!!, mLong!!, fenceKey, ringerMode)
                 }
+            } else {
+                Toast.makeText(
+                    context!!,
+                    "Please enter all requested information",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
 
     }
 
     private fun processClick() {
-
-
-        // Process text for network transmission
-
         if (!Places.isInitialized()) {
             Places.initialize(context!!, "AIzaSyDOSplxleMLGCL0d6qfpkBwrt8x_vDGadY")
         }
@@ -199,7 +207,11 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
                 var p = Autocomplete.getPlaceFromIntent(data!!)
                 //addrText?.setText(p.name + " " + p.address + " "+ p.id)
                 //addrText?.setText(p.latLng.toString() + " Address: " + p.address)
-                Log.i(TAG, p.name)
+
+                mLat = p.latLng?.latitude
+                mLong = p.latLng?.longitude
+
+                Toast.makeText(context!!, "You chose " + p.name, Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -211,12 +223,18 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         longitude: Double,
         fenceKey: String,
         ringerMode: Int
-    ): LocationData {
+    ) {
         Log.i(
             TAG,
-            "Location created with data: \n " + " Title: " + title + " Radius: " + radius + " Latitude: " + latitude + " Longitude: " + longitude + " Fence key: " + fenceKey + " ringerMode: " + ringerMode
+            "Location created with data: \n  Title: $title Radius: $radius Latitude: $latitude Longitude: $longitude Fence key: $fenceKey ringerMode: $ringerMode"
         )
-        return LocationData(latitude, longitude, radius, fenceKey, ringerMode)
+        val data = LocationData(title, latitude, longitude, radius, fenceKey, ringerMode)
+
+        mLocationList.add(data)
+        writeLocationDataList(context!!, mLocationList, LOCATION_LIST_FILENAME)
+
+        volumeMap[fenceKey] = ringerMode
+        writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
     }
 }
 
