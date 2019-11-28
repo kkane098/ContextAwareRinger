@@ -17,9 +17,11 @@ import com.example.ContextAwareRinger.Data.TimeData
 import java.util.*
 import android.media.AudioManager
 import com.example.ContextAwareRinger.*
+import com.example.ContextAwareRinger.Data.TimeDataListAdapter
 
 
-class TimeDialogFragment(val timeDataList : MutableList<TimeData>, val volumeMap: MutableMap<String, Int>): DialogFragment () {
+class TimeDialogFragment(var timeDataList : MutableList<TimeData>, var volumeMap: MutableMap<String, Int>,
+                         var timeAdapter: TimeDataListAdapter): DialogFragment () {
     val TAG = "Time Dialog Fragment"
     private lateinit var viewModel: TimeViewModel
 
@@ -139,7 +141,11 @@ class TimeDialogFragment(val timeDataList : MutableList<TimeData>, val volumeMap
                 volumeMap[workKey] = ringerMode!!
                 writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
                 timeDataList.add(time)
+                timeAdapter.add(time)
                 writeTimeDataList(context!!, timeDataList, TIME_LIST_FILENAME)
+
+                //TODO: Register Time Worker
+                enqueueTimeWorker(context!!, hour!!, minute!!, repetitionInterval, ringerMode!!, workKey)
             } else {
                 Toast.makeText(
                     context!!,
