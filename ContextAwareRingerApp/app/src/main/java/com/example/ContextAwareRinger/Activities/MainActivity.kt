@@ -7,6 +7,7 @@ import android.os.Environment
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.example.ContextAwareRinger.*
 import com.example.ContextAwareRinger.Data.ActivityData
@@ -19,7 +20,7 @@ class MainActivity : FragmentActivity() {
     var tabLayout: TabLayout? = null
     val TAG = "MAIN_ACTIVITY"
     var viewpage: ViewPager? = null
-
+    private lateinit var viewModel: TimeViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -45,5 +46,7 @@ class MainActivity : FragmentActivity() {
         viewpage!!.adapter = fragmentAdapter
 
         tabLayout!!.setupWithViewPager(viewpage)
+
+        viewModel = ViewModelProviders.of(this)[TimeViewModel::class.java]
     }
 }

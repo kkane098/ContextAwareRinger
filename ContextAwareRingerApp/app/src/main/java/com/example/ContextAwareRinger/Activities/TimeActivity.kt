@@ -27,29 +27,4 @@ class TimeActivity : Fragment() {
 
         return rootView
     }
-
-    private fun showAddDialog() {
-
-        Log.i(TAG, "Showing time dialog")
-
-//        //Make the Dialog visible
-//        val dialogBuilder = AlertDialog.Builder(activity as Context)
-//        val inflater = layoutInflater
-//        val dialogView = TimeDialogFragment.kt()
-//        dialogBuilder.setView(dialogView)
-//        dialogBuilder.setTitle("Add Time")
-//        val b = dialogBuilder.create()
-//        b.show()
-//
-//        //Get the UI components that contain information used to create a LocationData object
-//        val buttonUpdate = dialogView.findViewById<Button>(R.id.buttonUpdateAuthor)
-//        val locationTitle : EditText? = dialogView.findViewById(R.id.locationTitle)
-//        val radiusEditText : EditText? = dialogView.findViewById(R.id.radiusEditText)
-//        val radioGroup : RadioGroup = dialogView.findViewById(R.id.volumeRadioGroup)
-
-        //Set the onClick method for the submit button. It should not submit unless there are values for all a
-//        buttonUpdate.setOnClickListener {
-//        }
-
-    }
 }
