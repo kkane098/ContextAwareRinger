@@ -39,7 +39,7 @@ class TimeDialogFragment: DialogFragment () {
         timeButton = rootView.findViewById(R.id.startTimeButton)
         //Initialize viewmodel and observe the time data
         viewModel = ViewModelProviders.of(activity!!).get(TimeViewModel::class.java)
-
+        Log.i(TAG, "Oncreate called")
         //Update hour when it is changed by the timePicker Fragment
         val hourObserver = Observer { hour: Int? ->
             Log.i(TAG, "Hour updated")
@@ -148,6 +148,13 @@ class TimeDialogFragment: DialogFragment () {
 
         return rootView
     }
+
+    override fun onDetach() {
+        super.onDetach()
+        viewModel.hour.value = -1
+        viewModel.minute.value = -1
+    }
+
 
     //Converts the selected spinner option to an int
     private fun getRepetitionInterval(spinner : Spinner) : Int {
