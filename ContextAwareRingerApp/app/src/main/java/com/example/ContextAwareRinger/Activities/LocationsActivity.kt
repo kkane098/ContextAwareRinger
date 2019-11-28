@@ -117,7 +117,7 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
 
     }
 
-    // Need to load the goddamn listViewAdapter
+    // Need to load the listViewAdapter
     override fun onResume() {
         super.onResume()
         if(locationAdapter.count == 0) {
@@ -368,6 +368,10 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
 
         volumeMap[fenceKey] = ringerMode
         writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
+
+        // TODO: Register the fence
+        registerLocationFence(context!!,latitude,longitude,radius,fenceKey)
+
     }
 
     private fun updateLocation(
@@ -394,6 +398,9 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
 
         volumeMap[fenceKey] = ringerMode
         writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
+
+        // TODO: Register the fence
+        registerLocationFence(context!!,latitude,longitude,radius,fenceKey)
     }
 
     private fun deleteLocation(item: LocationData){
@@ -410,8 +417,12 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         volumeMap.remove(item.fenceKey)
         writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
 
+        //TODO: Unregister the Fence
+        unregisterFence(context!!,item.fenceKey)
+
         // Doing adapter stuff here
         locationAdapter.delete(item)
+
     }
 }
 
