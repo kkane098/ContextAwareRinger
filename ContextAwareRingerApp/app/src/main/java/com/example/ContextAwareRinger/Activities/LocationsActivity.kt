@@ -27,6 +27,7 @@ import com.google.android.libraries.places.api.model.TypeFilter
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import java.text.FieldPosition
 import java.util.*
 
 class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragment() {
@@ -79,10 +80,6 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -96,6 +93,12 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         locationAdapter = LocationDataListAdapter(context!!)
 
         locationListView.adapter = locationAdapter
+
+        locationListView?.setOnItemLongClickListener { parent, view, position, id ->
+            val location = locationAdapter.getItem(position) as LocationData
+            showUpdateDeleteDialog(location, position)
+            true
+        }
 
         mLocationList = readLocationDataList(context!!, LOCATION_LIST_FILENAME).toMutableList()
         Log.i(TAG, "list was $mLocationList")
@@ -123,6 +126,102 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
             for (i in locList) {
                 locationAdapter.add(i)
             }
+        }
+    }
+
+    private fun showUpdateDeleteDialog(location: LocationData, position: Int){
+        Log.i(TAG,"Update or Delete location")
+        //TODO: Set the Update-Delete Dialog
+        mLat = null
+        mLong = null
+
+        val dialogBuilder = AlertDialog.Builder(activity as Context)
+        val inflater = layoutInflater
+        val dialogView = inflater.inflate(R.layout.update_delete_location_dialog, null)
+        dialogBuilder.setView(dialogView)
+        dialogBuilder.setTitle("Update or Delete Location")
+        val b = dialogBuilder.create()
+        b.show()
+
+        //Get the UI components that contain information used to create a LocationData object
+        val buttonUpdate = dialogView.findViewById<Button>(R.id.buttonUpdate)
+        val buttonDelete = dialogView.findViewById<Button>(R.id.buttonDelete)
+        val locationTitle: EditText? = dialogView.findViewById(R.id.locationTitleLocationUpdateDelete)
+        val radiusEditText: EditText? = dialogView.findViewById(R.id.radiusEditTextLocationUpdateDelete)
+        val radioGroup: RadioGroup = dialogView.findViewById(R.id.volumeRadioGroupLocationUpdateDelete)
+        val buttonLocation: Button = dialogView.findViewById(R.id.place_autocomplete_buttonLocationUpdateDelete)
+
+        buttonLocation.setOnClickListener {
+            processClick()
+        }
+
+        //TODO: Handle Update
+        buttonUpdate.setOnClickListener {
+            val title = locationTitle?.text.toString().trim { it <= ' ' }
+
+            //Default radius to .5 miles
+            var radius = 200.0
+            //Update radius if user input exists
+            if (!radiusEditText?.text.isNullOrEmpty()) {
+                radius = java.lang.Double.parseDouble(radiusEditText?.text.toString())
+            }
+
+            //Extract the selected volume setting if it was selected
+            var selected: RadioButton? = null
+            var ringerMode = -1
+
+            //Ensure that there is a radio button selected
+            if (radioGroup.checkedRadioButtonId != -1) {
+                selected = dialogView.findViewById(radioGroup.checkedRadioButtonId)
+            }
+
+            //Assign ringerMode based on which radio button is selected
+            if (selected != null) {
+                if (selected.text == "Do Not Disturb") {
+                    ringerMode = AudioManager.RINGER_MODE_SILENT
+                } else if (selected.text == "Vibrate") {
+                    ringerMode = AudioManager.RINGER_MODE_VIBRATE
+                } else {
+                    ringerMode = AudioManager.RINGER_MODE_NORMAL
+                }
+            }
+
+            val fenceKey = UUID.randomUUID().toString()
+
+            //If all the data fields are filled in, submit the data
+            if (!TextUtils.isEmpty(title) && !radiusEditText?.text.isNullOrEmpty() && radioGroup.checkedRadioButtonId != -1 && mLat != null && mLong != null) {
+                if (needsLocationRuntimePermission()) {
+                    Log.i(TAG, "requesting permissions")
+                    requestPermissions(
+                        arrayOf(
+                            android.Manifest.permission.ACCESS_FINE_LOCATION,
+                            android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                        ), LOCATION_PERMISSION_REQUEST
+                    )
+                } else {
+
+                    //TODO: Store location data in the file system
+                    Log.i(TAG, "submitting")
+                    b.dismiss()
+
+                    //TODO: Update the location
+                    deleteLocation(location)
+                    updateLocation(title, mPlaceName!!, radius, mLat!!, mLong!!, fenceKey, ringerMode, position)
+                }
+            } else {
+                Toast.makeText(
+                    context!!,
+                    "Please enter all requested information",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+        //TODO: Handle Delete
+        buttonDelete.setOnClickListener{
+            deleteLocation(location)
+            //TODO: close the dialog box
+            b.dismiss()
         }
     }
 
@@ -212,6 +311,8 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
             }
         }
 
+
+
     }
 
     private fun processClick() {
@@ -267,6 +368,50 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
 
         volumeMap[fenceKey] = ringerMode
         writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
+    }
+
+    private fun updateLocation(
+        title: String,
+        placeName: String,
+        radius: Double,
+        latitude: Double,
+        longitude: Double,
+        fenceKey: String,
+        ringerMode: Int,
+        i: Int
+    ) {
+        Log.i(
+            TAG,
+            "Location created with data: \n  Title: $title Radius: $radius Latitude: $latitude Longitude: $longitude Fence key: $fenceKey ringerMode: $ringerMode"
+        )
+        val data = LocationData(title, placeName, latitude, longitude, radius, fenceKey, ringerMode)
+
+        mLocationList.add(data)
+        writeLocationDataList(context!!, mLocationList, LOCATION_LIST_FILENAME)
+
+        // Doing adapter stuff here
+        locationAdapter.add(data,i)
+
+        volumeMap[fenceKey] = ringerMode
+        writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
+    }
+
+    private fun deleteLocation(item: LocationData){
+        Log.i(
+            TAG,
+            "Location Deleted with data: \n  Title: ${item.name} Radius: ${item.radius} Latitude: ${item.lat} Longitude: ${item.lng} Fence key: ${item.fenceKey} ringerMode: ${item.ringerMode}"
+        )
+        // Remove old location
+        mLocationList.remove(item)
+        // Add new location
+        writeLocationDataList(context!!, mLocationList, LOCATION_LIST_FILENAME)
+
+
+        volumeMap.remove(item.fenceKey)
+        writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
+
+        // Doing adapter stuff here
+        locationAdapter.delete(item)
     }
 }
 
