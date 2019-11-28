@@ -132,8 +132,9 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
     private fun showUpdateDeleteDialog(location: LocationData, position: Int){
         Log.i(TAG,"Update or Delete location")
         //TODO: Set the Update-Delete Dialog
-        mLat = null
-        mLong = null
+        mLat = location.lat
+        mLong = location.lng
+        mPlaceName = location.placeName
 
         val dialogBuilder = AlertDialog.Builder(activity as Context)
         val inflater = layoutInflater
@@ -151,6 +152,23 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         val radioGroup: RadioGroup = dialogView.findViewById(R.id.volumeRadioGroupLocationUpdateDelete)
         val buttonLocation: Button = dialogView.findViewById(R.id.place_autocomplete_buttonLocationUpdateDelete)
 
+        locationTitle!!.setText(location.name)
+        radiusEditText!!.setText(location.radius.toString())
+        when(location.ringerMode){
+            AudioManager.RINGER_MODE_VIBRATE -> {
+                val vibrateButton = dialogView.findViewById<RadioButton>(R.id.radioButton2)
+                vibrateButton.isChecked = true
+            }
+            AudioManager.RINGER_MODE_SILENT -> {
+                val silentButton = dialogView.findViewById<RadioButton>(R.id.radioButton)
+                silentButton.isChecked = true
+            }
+            AudioManager.RINGER_MODE_NORMAL -> {
+                val normalButton = dialogView.findViewById<RadioButton>(R.id.radioButton3)
+                normalButton.isChecked = true
+            }
+        }
+
         buttonLocation.setOnClickListener {
             processClick()
         }
@@ -159,8 +177,7 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         buttonUpdate.setOnClickListener {
             val title = locationTitle?.text.toString().trim { it <= ' ' }
 
-            //Default radius to .5 miles
-            var radius = 200.0
+            var radius = location.radius
             //Update radius if user input exists
             if (!radiusEditText?.text.isNullOrEmpty()) {
                 radius = java.lang.Double.parseDouble(radiusEditText?.text.toString())
@@ -186,8 +203,6 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
                 }
             }
 
-            val fenceKey = UUID.randomUUID().toString()
-
             //If all the data fields are filled in, submit the data
             if (!TextUtils.isEmpty(title) && !radiusEditText?.text.isNullOrEmpty() && radioGroup.checkedRadioButtonId != -1 && mLat != null && mLong != null) {
                 if (needsLocationRuntimePermission()) {
@@ -206,7 +221,7 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
 
                     //TODO: Update the location
                     deleteLocation(location)
-                    updateLocation(title, mPlaceName!!, radius, mLat!!, mLong!!, fenceKey, ringerMode, position)
+                    updateLocation(title, mPlaceName!!, radius, mLat!!, mLong!!, location.fenceKey, ringerMode, position)
                 }
             } else {
                 Toast.makeText(
