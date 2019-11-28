@@ -14,11 +14,17 @@
     <string name="enter_name_hint_string">Enter name</string>
     <string name="update_string">Update</string>
     <string name="delete_string">Delete</string>
-    <array name="radius">
-        <item name="1 Mile">America</item>
-        <item name="5 Miles">France</item>
-        <item name="10 Miles">Spain</item>
-        <item name="25 Miles">Columbia</item>
-        <item name="50 Miles">Russia</item>
-    </array>
+    <string name ="time_spinner_title"></string>
+    <string-array name="time_repetition_choices">
+        <item>Daily</item>
+        <item>Weekends</item>
+        <item>Week Days</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
 </resources>

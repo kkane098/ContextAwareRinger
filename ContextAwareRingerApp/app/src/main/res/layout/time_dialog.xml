@@ -12,7 +12,7 @@
         style="?android:attr/buttonBarStyle">
 
         <RadioGroup
-            android:id="@+id/volumeRadioGroup"
+            android:id="@+id/volumeRadioGroupTime"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
             <TextView
@@ -54,6 +54,13 @@
         style="?android:attr/buttonBarButtonStyle"
         android:textColor="@color/primary_dark"/>
 
+<!--    //TODO: May want to add a title or instructions to the spinner, or some indication of what the values are for -->
+    <Spinner
+        android:id="@+id/timeSelectionSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:entries="@array/time_repetition_choices" />
     <Button
         android:id="@+id/buttonSubmitTime"
         android:layout_width="wrap_content"
