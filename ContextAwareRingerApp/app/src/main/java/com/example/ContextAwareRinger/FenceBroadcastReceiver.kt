@@ -36,6 +36,30 @@ class FenceBroadcastReceiver : BroadcastReceiver() {
         Toast.makeText(context, "Broadcast Received by Receiver", Toast.LENGTH_LONG).show()
         val fenceState = FenceState.extract(intent)
         val fenceKey = fenceState.fenceKey
-        // TODO: check map of keys to ringer modes and change ringer mode accordingly
+        val volumeMap = readVolumeMap(context, VOLUME_MAP_FILENAME)
+        Log.i(TAG, "Map in receiver was $volumeMap")
+        if(volumeMap.containsKey(fenceKey)){
+            val ringerMode = volumeMap[fenceKey]
+            when (fenceState.currentState) {
+                FenceState.TRUE -> {
+                    val audioManager =
+                        context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+                    if (ringerMode == AudioManager.RINGER_MODE_SILENT) {
+                        audioManager.ringerMode = AudioManager.RINGER_MODE_NORMAL
+                        Thread.sleep(1000)
+                        audioManager.ringerMode = AudioManager.RINGER_MODE_SILENT
+                    } else {
+                        audioManager.ringerMode = ringerMode!!
+                    }
+                    Log.i(TAG, "Fence $fenceKey was true!")
+                }
+                FenceState.FALSE -> {
+                    Log.i(TAG, "Fence $fenceKey was false!")
+                }
+                FenceState.UNKNOWN -> {
+                    Log.i(TAG, "Fence $fenceKey state unknown!")
+                }
+            }
+        }
     }
 }

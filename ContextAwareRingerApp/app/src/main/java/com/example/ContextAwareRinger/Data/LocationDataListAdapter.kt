@@ -26,6 +26,11 @@ class LocationDataListAdapter (private val mContext: Context) : BaseAdapter() {
         notifyDataSetChanged()
     }
 
+    fun add(item: LocationData, index: Int) {
+        mItems.add(index,item)
+        notifyDataSetChanged()
+    }
+
     // Clears the list adapter of all items.
 
     fun clear() {
@@ -34,6 +39,24 @@ class LocationDataListAdapter (private val mContext: Context) : BaseAdapter() {
 
         notifyDataSetChanged()
 
+    }
+
+    fun delete(item: LocationData){
+        var count = 0
+        for(i in mItems){
+            if(i.equals(item)){
+                break
+            }
+            count++
+        }
+        mItems.removeAt(count)
+        notifyDataSetChanged()
+    }
+
+    fun update(item: LocationData){
+        delete(item)
+        add(item)
+        notifyDataSetChanged()
     }
 
     // Returns the number of ToDoItems
@@ -64,7 +87,7 @@ class LocationDataListAdapter (private val mContext: Context) : BaseAdapter() {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         //TODO("not implemented")
 
-        val locationItem:LocationData = mItems[position]
+        val locationItem:LocationData = mItems.get(position)
         val newView : View
         val viewHolder: ViewHolder
 
