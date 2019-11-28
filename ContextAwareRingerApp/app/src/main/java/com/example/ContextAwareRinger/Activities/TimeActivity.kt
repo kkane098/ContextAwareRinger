@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.ContextAwareRinger.R
+import com.example.ContextAwareRinger.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class TimeActivity : Fragment() {
@@ -17,11 +17,14 @@ class TimeActivity : Fragment() {
         val rootView = inflater!!.inflate(R.layout.time, container, false)
         floatingActionButton = rootView.findViewById(R.id.timeFAB)
 
+        val timeDataList = readTimeDataList(context!!, TIME_LIST_FILENAME).toMutableList()
+        val volumeMap = readVolumeMap(context!!, VOLUME_MAP_FILENAME).toMutableMap()
+
         //Set the onclick for the floating button to open a dialog box
         floatingActionButton?.setOnClickListener {
             Log.i(TAG, "Adding onclick listener to fab")
             val ft = fragmentManager!!.beginTransaction()
-            val dialogFragment = TimeDialogFragment()
+            val dialogFragment = TimeDialogFragment(timeDataList, volumeMap)
             dialogFragment.show(ft, "dialog")
         }
 

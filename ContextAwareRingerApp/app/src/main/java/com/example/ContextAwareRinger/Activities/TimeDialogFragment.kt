@@ -14,13 +14,12 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.ContextAwareRinger.Data.LocationData
 import com.example.ContextAwareRinger.Data.TimeData
-import com.example.ContextAwareRinger.R
-import com.example.ContextAwareRinger.TimeViewModel
 import java.util.*
 import android.media.AudioManager
+import com.example.ContextAwareRinger.*
 
 
-class TimeDialogFragment: DialogFragment () {
+class TimeDialogFragment(val timeDataList : MutableList<TimeData>, val volumeMap: MutableMap<String, Int>): DialogFragment () {
     val TAG = "Time Dialog Fragment"
     private lateinit var viewModel: TimeViewModel
 
@@ -137,6 +136,10 @@ class TimeDialogFragment: DialogFragment () {
 
                 //TODO: Create list adapter stuff
                 val time = TimeData(hour!!, minute!!, repetitionInterval, workKey, ringerMode!!)
+                volumeMap[workKey] = ringerMode!!
+                writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
+                timeDataList.add(time)
+                writeTimeDataList(context!!, timeDataList, TIME_LIST_FILENAME)
             } else {
                 Toast.makeText(
                     context!!,
