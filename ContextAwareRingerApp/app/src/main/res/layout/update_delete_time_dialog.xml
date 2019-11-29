@@ -22,19 +22,19 @@
                 android:text="Select volume option: "
                 />
             <RadioButton
-                android:id="@+id/radioButton"
+                android:id="@+id/radioButtonUpdateDeleteTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Do Not Disturb" />
 
             <RadioButton
-                android:id="@+id/radioButton2"
+                android:id="@+id/radioButtonUpdateDeleteTime2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Vibrate" />
 
             <RadioButton
-                android:id="@+id/radioButton3"
+                android:id="@+id/radioButtonUpdateDeleteTime3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Normal Volume" />

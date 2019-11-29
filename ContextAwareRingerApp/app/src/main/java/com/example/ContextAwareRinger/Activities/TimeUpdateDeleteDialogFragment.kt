@@ -26,8 +26,8 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
     val TAG = "Time Dialog Fragment"
     private lateinit var viewModel: TimeViewModel
 
-    private var hour : Int? = -1
-    private var minute : Int? = -1
+    private var hour : Int? = timeItem.hour
+    private var minute : Int? = timeItem.min
 
     private lateinit var timeButton : Button
 
@@ -43,6 +43,48 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
         //Initialize viewmodel and observe the time data
         viewModel = ViewModelProviders.of(activity!!).get(TimeViewModel::class.java)
         Log.i(TAG, "Oncreate called")
+
+        //TODO: Add code so that information is restored when update dialog box is started
+        var tempHr = (timeItem.hour%12).toString()
+        if(timeItem.hour%12 == 0){
+            tempHr = "12"
+        }
+        var tempMn = ""
+        if(timeItem.min > 9){
+            tempMn = timeItem.min.toString()
+        }
+        else{
+            tempMn = "0" + timeItem.min
+        }
+        timeButton.text = "Time Selected - " + tempHr + ":" + tempMn
+
+        /*this.hour = timeItem.hour!!
+        this.minute = timeItem.min!!
+        Log.i(TAG,"CHECKING IF HOUR WORKING" + this.hour.toString())
+        Log.i(TAG,"CHECKING IF MINUTE WORKING" + this.minute.toString())*/
+
+        when(timeItem.ringerMode){
+            AudioManager.RINGER_MODE_SILENT -> (rootView.findViewById(R.id.radioButtonUpdateDeleteTime) as RadioButton).isChecked = true
+            AudioManager.RINGER_MODE_VIBRATE -> (rootView.findViewById(R.id.radioButtonUpdateDeleteTime2) as RadioButton).isChecked = true
+            AudioManager.RINGER_MODE_NORMAL -> (rootView.findViewById(R.id.radioButtonUpdateDeleteTime3) as RadioButton).isChecked = true
+
+        }
+
+        when(timeItem.day){
+            DAILY -> spinner.setSelection(0)
+            WEEKEND -> spinner.setSelection(1)
+            WEEKDAY -> spinner.setSelection(2)
+            Calendar.MONDAY -> spinner.setSelection(3)
+            Calendar.TUESDAY -> spinner.setSelection(4)
+            Calendar.WEDNESDAY -> spinner.setSelection(5)
+            Calendar.THURSDAY -> spinner.setSelection(6)
+            Calendar.FRIDAY -> spinner.setSelection(7)
+            Calendar.SATURDAY -> spinner.setSelection(8)
+            Calendar.SUNDAY -> spinner.setSelection(9)
+        }
+
+        // -------------------------------------------------------------------------------
+
         //Update hour when it is changed by the timePicker Fragment
         val hourObserver = Observer { hour: Int? ->
             Log.i(TAG, "Hour updated")
@@ -132,7 +174,7 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
             val workKey = timeItem.workKey
 
             //Ensure that all user input is provided
-            if (radioGroup.checkedRadioButtonId != -1 && hour != -1 && minute != -1) {
+            if ((radioGroup.checkedRadioButtonId != -1) && (hour != -1) && (minute != -1)) {
                 //Close the dialog box
                 dismiss()
 
@@ -154,13 +196,14 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
                 val time = TimeData(hour!!, minute!!, repetitionInterval, workKey, ringerMode!!)
                 volumeMap[workKey] = ringerMode!!
                 writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
-                timeDataList.add(time)
-                timeAdapter.add(time)
+                timeDataList.add(positionInView,time)
+                timeAdapter.add(time,positionInView)
                 writeTimeDataList(context!!, timeDataList, TIME_LIST_FILENAME)
 
                 //TODO: Register Time Worker
                 enqueueTimeWorker(context!!, hour!!, minute!!, repetitionInterval, ringerMode!!, workKey)
-            } else {
+            }
+            else {
                 Toast.makeText(
                     context!!,
                     "Please enter all requested information",
@@ -187,11 +230,11 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
         return rootView
     }
 
-    override fun onDetach() {
+    /*override fun onDetach() {
         super.onDetach()
         viewModel.hour.value = -1
         viewModel.minute.value = -1
-    }
+    }*/
 
 
 

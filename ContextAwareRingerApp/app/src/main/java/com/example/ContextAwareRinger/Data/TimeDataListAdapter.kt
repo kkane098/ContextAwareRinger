@@ -99,7 +99,13 @@ class TimeDataListAdapter (private val mContext: Context) : BaseAdapter(){
         if(hr == 0){
             hr = 12
         }
-        tempTime += (hr).toString() + ":" + timeItem.min.toString() + " "
+        if(timeItem.min < 10){
+            tempTime += (hr).toString() + ":0" + timeItem.min.toString() + " "
+        }
+        else{
+            tempTime += (hr).toString() + ":" + timeItem.min.toString() + " "
+        }
+
         if(timeItem.hour > 11){
             tempTime += "pm"
         }

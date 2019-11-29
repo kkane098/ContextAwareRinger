@@ -23,7 +23,7 @@ class TimeActivity() : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater!!.inflate(R.layout.time, container, false)
-        floatingActionButton = rootView.findViewById(R.id.timeFAB)
+        floatingActionButton = rootView.findViewById(R.id.timeFAB) as FloatingActionButton
 
         val timeDataList = readTimeDataList(context!!, TIME_LIST_FILENAME).toMutableList()
         val volumeMap = readVolumeMap(context!!, VOLUME_MAP_FILENAME).toMutableMap()

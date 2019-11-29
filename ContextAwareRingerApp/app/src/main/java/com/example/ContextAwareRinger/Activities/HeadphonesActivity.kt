@@ -53,7 +53,6 @@ class HeadphonesActivity(private val volumeMap : MutableMap<String, Int>) : Frag
 
         // TODO: repeat for headphones out
         radioGroup.setOnCheckedChangeListener { _, checkedId ->
-            Toast.makeText(context!!, " Is this working??", Toast.LENGTH_LONG)
             //var selected = rootView.findViewById<RadioButton>(radioGroup.checkedRadioButtonId)
             updateHeadphoneFence(0, checkedId)
         }
@@ -67,15 +66,15 @@ class HeadphonesActivity(private val volumeMap : MutableMap<String, Int>) : Frag
 
         if(checkId == R.id.radioButtonHeadphone1){
             ringerMode = AudioManager.RINGER_MODE_SILENT
-            Toast.makeText(context!!, "Do Not Disturb selected " + ringerMode.toString(), Toast.LENGTH_LONG).show()
+            Log.i(TAG, "Do Not Disturb Selected " + ringerMode)
         }
         else if(checkId == R.id.radioButtonHeadphone2){
             ringerMode = AudioManager.RINGER_MODE_VIBRATE
-            Toast.makeText(context!!, "Vibrate Selected " + ringerMode.toString(), Toast.LENGTH_LONG).show()
+            Log.i(TAG, "Vibrate Selected " + ringerMode)
         }
         else if(checkId == R.id.radioButtonHeadphone3){
             ringerMode = AudioManager.RINGER_MODE_NORMAL
-            Toast.makeText(context!!, "Normal Selected " + ringerMode.toString(), Toast.LENGTH_LONG).show()
+            Log.i(TAG, "Normal Selected " + ringerMode)
         }
 
         when(dataIdx) {
