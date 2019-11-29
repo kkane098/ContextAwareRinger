@@ -38,6 +38,7 @@ val WEEKEND = -3
 val VOLUME_MAP_FILENAME = "volumeMap.txt"
 val LOCATION_LIST_FILENAME = "locationList.txt"
 val TIME_LIST_FILENAME = "timeList.txt"
+val HEADPHONES_LIST_FILENAME = "headphonesList.txt"
 
 //Example usage of these functions, the following code will write an object to a file then read it back:
 //  val activityData = ActivityData(1, "test", 1)
