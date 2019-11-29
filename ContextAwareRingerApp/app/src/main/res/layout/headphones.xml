@@ -20,23 +20,24 @@
             android:text="Headphones in:" />
 
         <RadioGroup
+            android:id="@+id/headphonesRadio"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 
             <RadioButton
-                android:id="@+id/radioButton"
+                android:id="@+id/radioButtonHeadphone1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Do Not Disturb" />
 
             <RadioButton
-                android:id="@+id/radioButton2"
+                android:id="@+id/radioButtonHeadphone2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Vibrate" />
 
             <RadioButton
-                android:id="@+id/radioButton3"
+                android:id="@+id/radioButtonHeadphone3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Normal Volume" />

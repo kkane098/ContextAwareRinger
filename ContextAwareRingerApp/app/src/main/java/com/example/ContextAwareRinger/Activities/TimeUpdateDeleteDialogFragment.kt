@@ -194,48 +194,6 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
     }
 
 
-    //Converts the selected spinner option to an int
-    private fun getRepetitionInterval(spinner : Spinner) : Int {
-        val text = spinner.selectedItem.toString()
-        when (text) {
-            "Daily" -> return com.example.ContextAwareRinger.DAILY
-            "Weekends" -> return com.example.ContextAwareRinger.WEEKEND
-            "Week Days" -> return com.example.ContextAwareRinger.WEEKDAY
-            "Monday" -> return Calendar.MONDAY
-            "Tuesday" -> return Calendar.TUESDAY
-            "Wednesday" -> return Calendar.WEDNESDAY
-            "Thursday" -> return Calendar.THURSDAY
-            "Friday" -> return Calendar.FRIDAY
-            "Saturday" -> return Calendar.SATURDAY
-            "Sunday" -> return Calendar.SUNDAY
-        }
 
-        //Should never reach this point
-        throw Exception("No valid value for repetition interval found")
-
-    }
 }
 
-/*
-class TimePickerFragment : DialogFragment(), TimePickerDialog.OnTimeSetListener {
-    val TAG = "Time Picker Fragment"
-    private lateinit var viewModel: TimeViewModel
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        viewModel = ViewModelProviders.of(activity!!).get(TimeViewModel::class.java)
-        val c = Calendar.getInstance()
-        val hourOfDay = c.get(Calendar.HOUR_OF_DAY)
-        val minute = c.get(Calendar.MINUTE)
-
-        // Create a new instance of TimePickerDialog and return it
-        return TimePickerDialog(activity, this, hourOfDay, minute,false)
-    }
-
-
-    override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
-        Log.i(TAG, "Updating times values in view model")
-        //Update the values of hour and minute in the viewModel so that timedialogfragment gets updated
-        viewModel.hour.value = hourOfDay
-        viewModel.minute.value = minute
-    }
-}*/

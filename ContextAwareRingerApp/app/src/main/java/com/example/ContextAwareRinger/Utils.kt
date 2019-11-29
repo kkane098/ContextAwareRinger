@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.widget.Spinner
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -355,3 +356,23 @@ fun readVolumeMap(context: Context, fileName: String): Map<String, Int>{
     }
 }
 
+// Util function that returns an int based on the day selected in Time Fragment
+fun getRepetitionInterval(spinner : Spinner) : Int {
+    val text = spinner.selectedItem.toString()
+    when (text) {
+        "Daily" -> return com.example.ContextAwareRinger.DAILY
+        "Weekends" -> return com.example.ContextAwareRinger.WEEKEND
+        "Week Days" -> return com.example.ContextAwareRinger.WEEKDAY
+        "Monday" -> return Calendar.MONDAY
+        "Tuesday" -> return Calendar.TUESDAY
+        "Wednesday" -> return Calendar.WEDNESDAY
+        "Thursday" -> return Calendar.THURSDAY
+        "Friday" -> return Calendar.FRIDAY
+        "Saturday" -> return Calendar.SATURDAY
+        "Sunday" -> return Calendar.SUNDAY
+    }
+
+    //Should never reach this point
+    throw Exception("No valid value for repetition interval found")
+
+}

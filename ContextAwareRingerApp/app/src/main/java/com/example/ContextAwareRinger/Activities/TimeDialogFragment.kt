@@ -131,8 +131,6 @@ class TimeDialogFragment(var timeDataList : MutableList<TimeData>, var volumeMap
 
             //Ensure that all user input is provided
             if (radioGroup.checkedRadioButtonId != -1 && hour != -1 && minute != -1) {
-                //Close the dialog box
-                dismiss()
 
                 Log.i(TAG, "Time object created with Hour: " + hour + ", Minute: " + minute + ", Volume: " + selected!!.text + ", Interval: " + spinner.selectedItem.toString())
 
@@ -146,7 +144,11 @@ class TimeDialogFragment(var timeDataList : MutableList<TimeData>, var volumeMap
 
                 //TODO: Register Time Worker
                 enqueueTimeWorker(context!!, hour!!, minute!!, repetitionInterval, ringerMode!!, workKey)
-            } else {
+
+                //Close the dialog box
+                dismiss()
+            }
+            else {
                 Toast.makeText(
                     context!!,
                     "Please enter all requested information",
@@ -164,27 +166,6 @@ class TimeDialogFragment(var timeDataList : MutableList<TimeData>, var volumeMap
         viewModel.minute.value = -1
     }
 
-
-    //Converts the selected spinner option to an int
-    private fun getRepetitionInterval(spinner : Spinner) : Int {
-        val text = spinner.selectedItem.toString()
-        when (text) {
-            "Daily" -> return com.example.ContextAwareRinger.DAILY
-            "Weekends" -> return com.example.ContextAwareRinger.WEEKEND
-            "Week Days" -> return com.example.ContextAwareRinger.WEEKDAY
-            "Monday" -> return Calendar.MONDAY
-            "Tuesday" -> return Calendar.TUESDAY
-            "Wednesday" -> return Calendar.WEDNESDAY
-            "Thursday" -> return Calendar.THURSDAY
-            "Friday" -> return Calendar.FRIDAY
-            "Saturday" -> return Calendar.SATURDAY
-            "Sunday" -> return Calendar.SUNDAY
-        }
-
-        //Should never reach this point
-        throw Exception("No valid value for repetition interval found")
-
-    }
 }
 
 
