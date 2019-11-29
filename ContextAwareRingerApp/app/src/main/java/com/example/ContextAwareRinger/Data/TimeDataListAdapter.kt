@@ -33,6 +33,18 @@ class TimeDataListAdapter (private val mContext: Context) : BaseAdapter(){
         notifyDataSetChanged()
     }
 
+    fun delete(item: TimeData){
+        var count = 0
+        for(i in mItems){
+            if(i.equals(item)){
+                break
+            }
+            count++
+        }
+        mItems.removeAt(count)
+        notifyDataSetChanged()
+    }
+
     override fun getCount(): Int {
 
         return mItems.size

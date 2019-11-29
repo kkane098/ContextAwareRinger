@@ -153,7 +153,7 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         val buttonLocation: Button = dialogView.findViewById(R.id.place_autocomplete_buttonLocationUpdateDelete)
 
         locationTitle!!.setText(location.name)
-        radiusEditText!!.setText(location.radius.toString())
+        radiusEditText!!.setText(location.radius.toInt().toString())
         when(location.ringerMode){
             AudioManager.RINGER_MODE_VIBRATE -> {
                 val vibrateButton = dialogView.findViewById<RadioButton>(R.id.radioButton2)

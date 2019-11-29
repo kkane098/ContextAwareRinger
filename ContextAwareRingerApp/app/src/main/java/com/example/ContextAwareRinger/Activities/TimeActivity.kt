@@ -38,8 +38,16 @@ class TimeActivity() : Fragment() {
             val ft = fragmentManager!!.beginTransaction()
             val dialogFragment = TimeDialogFragment(timeDataList, volumeMap, timeAdapter)
             dialogFragment.show(ft, "dialog")
-            val c = timeDataList.size
-            //timeAdapter.add(timeDataList[c-1])              // Might not work
+
+        }
+
+        timeListView?.setOnItemLongClickListener { parent, view, position, id ->
+            Log.i(TAG, "Adding onLongClick listener to list view items")
+            var time = timeAdapter.getItem(position) as TimeData
+            val ft = fragmentManager!!.beginTransaction()
+            val dialogFragment = TimeUpdateDeleteDialogFragment(timeDataList, volumeMap, timeAdapter, time, position)
+            dialogFragment.show(ft, "dialog")
+            true
         }
 
         return rootView
