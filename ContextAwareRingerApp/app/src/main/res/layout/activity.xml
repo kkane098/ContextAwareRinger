@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         app:cardBackgroundColor="@color/cardBackground"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="3dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="5dp"
         app:contentPadding="4dp">
 
 
@@ -56,8 +56,8 @@
         android:layout_below="@+id/card_view_activity_on_foot"
         android:layout_margin="5dp"
         app:cardBackgroundColor="@color/cardBackground"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="3dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="5dp"
         app:contentPadding="4dp">
 
 
@@ -101,8 +101,8 @@
         android:layout_below="@+id/card_view_activity_vehicle"
         android:layout_margin="5dp"
         app:cardBackgroundColor="@color/cardBackground"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="3dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="5dp"
         app:contentPadding="4dp">
 
 

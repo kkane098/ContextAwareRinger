@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         app:cardBackgroundColor="@color/cardBackground"
-        app:cardCornerRadius="6dp"
-        app:cardElevation="10dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="5dp"
         app:contentPadding="4dp">
 
         <RadioGroup
@@ -55,8 +55,8 @@
         android:layout_below="@+id/card_view"
         app:cardBackgroundColor="@color/cardBackground"
         android:layout_margin="5dp"
-        app:cardCornerRadius="6dp"
-        app:cardElevation="10dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="5dp"
         app:contentPadding="4dp">
 
 

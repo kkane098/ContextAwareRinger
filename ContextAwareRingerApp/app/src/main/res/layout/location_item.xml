@@ -1,27 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:text="Location Name"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        android:id="@+id/textLocationName"
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:cardBackgroundColor="@color/cardBackground"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="5dp"
+        app:contentPadding="4dp">
 
-    <TextView
-        android:text="Place Name"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:id="@+id/textPlaceName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    <TextView
-        android:text="Subtitle"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-        android:id="@+id/textLocationSubtitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/textLocationName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Location Name"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/textPlaceName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Place Name"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+            <TextView
+                android:id="@+id/textLocationSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Subtitle"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</FrameLayout>
