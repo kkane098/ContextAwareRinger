@@ -77,22 +77,11 @@ class HeadphonesActivity(private val volumeMap : MutableMap<String, Int>) : Frag
             Log.i(TAG, "Normal Selected " + ringerMode)
         }
 
-        when(dataIdx) {
-            0 -> {
-                mHeadphonesDataList[0] = HeadphonesData(HEADPHONES_IN, "headphonesIn", ringerMode)
-                writeHeadphoneDataList(context!!, mHeadphonesDataList, HEADPHONES_LIST_FILENAME)
-                volumeMap["headphonesIn"] = ringerMode
-                writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
-                registerHeadphoneInFence(context!!, "headphonesIn")
-            }
-            1 -> {
-                mHeadphonesDataList[1] = HeadphonesData(HEADPHONES_OUT, "headphonesOut", ringerMode)
-                writeHeadphoneDataList(context!!, mHeadphonesDataList, HEADPHONES_LIST_FILENAME)
-                volumeMap["headphonesOut"] = ringerMode
-                writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
-                registerHeadphoneInFence(context!!, "headphonesOut")
-            }
-        }
-
+        val currData = mHeadphonesDataList[dataIdx]
+        mHeadphonesDataList[dataIdx] = HeadphonesData(currData.headphoneState, currData.fenceKey, ringerMode)
+        writeHeadphoneDataList(context!!, mHeadphonesDataList, HEADPHONES_LIST_FILENAME)
+        volumeMap[currData.fenceKey] = ringerMode
+        writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
+        registerHeadphoneInFence(context!!, currData.fenceKey)
     }
 }

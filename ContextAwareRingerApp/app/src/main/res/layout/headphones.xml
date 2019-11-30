@@ -4,31 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
-
-
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        app:cardBackgroundColor="#81C784"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="3dp"
+        app:cardBackgroundColor="@color/cardBackground"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="10dp"
         app:contentPadding="4dp">
-
 
         <RadioGroup
             android:id="@+id/headphonesRadio"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <TextView
                 android:id="@+id/headphonesInTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Headphones In: "
-                />
+                android:text="Headphones In: " />
+
             <RadioButton
                 android:id="@+id/radioButtonHeadphone1"
                 android:layout_width="match_parent"
@@ -50,16 +46,17 @@
 
         </RadioGroup>
 
-        </androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/card_view"
+        app:cardBackgroundColor="@color/cardBackground"
         android:layout_margin="5dp"
-        app:cardBackgroundColor="#81C784"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="3dp"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="10dp"
         app:contentPadding="4dp">
 
 
@@ -67,12 +64,13 @@
             android:id="@+id/headphonesRadio2"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <TextView
                 android:id="@+id/headphonesOutTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Headphones Out: "
-                />
+                android:text="Headphones Out: " />
+
             <RadioButton
                 android:id="@+id/radioButtonHeadphone4"
                 android:layout_width="match_parent"
