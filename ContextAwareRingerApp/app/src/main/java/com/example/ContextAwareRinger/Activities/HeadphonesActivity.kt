@@ -82,6 +82,11 @@ class HeadphonesActivity(private val volumeMap : MutableMap<String, Int>) : Frag
         writeHeadphoneDataList(context!!, mHeadphonesDataList, HEADPHONES_LIST_FILENAME)
         volumeMap[currData.fenceKey] = ringerMode
         writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
-        registerHeadphoneInFence(context!!, currData.fenceKey)
+        if(currData.headphoneState == HEADPHONES_IN) {
+            registerHeadphoneInFence(context!!, currData.fenceKey)
+        }
+        else {
+            registerHeadphoneOutFence(context!!, currData.fenceKey)
+        }
     }
 }
