@@ -1,6 +1,6 @@
 package com.example.ContextAwareRinger.Activities;
 
-import android.app.Activity
+import androidx.lifecycle.Observer
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -17,6 +17,7 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.example.ContextAwareRinger.*
 import com.example.ContextAwareRinger.Data.LocationData
 import com.example.ContextAwareRinger.Data.LocationDataListAdapter
@@ -154,6 +155,17 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
 
         locationTitle!!.setText(location.name)
         radiusEditText!!.setText(location.radius.toInt().toString())
+
+        val nameObserver = Observer { name: String? ->
+            Log.i(TAG, "Location updated")
+            if (name != null) {
+
+                locationTitle?.setText(name)
+            }
+        }
+
+        ViewModelProviders.of(activity!!).get(TimeViewModel::class.java).name.observe(this, nameObserver)
+
         when(location.ringerMode){
             AudioManager.RINGER_MODE_VIBRATE -> {
                 val vibrateButton = dialogView.findViewById<RadioButton>(R.id.radioButton2)
@@ -265,6 +277,16 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         val radioGroup: RadioGroup = dialogView.findViewById(R.id.volumeRadioGroup)
         val buttonLocation: Button = dialogView.findViewById(R.id.place_autocomplete_button)
 
+        val nameObserver = Observer { name: String? ->
+            Log.i(TAG, "Location updated")
+            if (name != null) {
+
+                locationTitle?.setText(name)
+            }
+        }
+
+        ViewModelProviders.of(activity!!).get(TimeViewModel::class.java).name.observe(this, nameObserver)
+
         buttonLocation.setOnClickListener {
             processClick()
         }
@@ -354,6 +376,8 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
                 mLat = p.latLng?.latitude
                 mLong = p.latLng?.longitude
                 mPlaceName = p.name
+
+                ViewModelProviders.of(activity!!).get(TimeViewModel::class.java).name.value = p.name
 
                 Toast.makeText(context!!, "You chose $mPlaceName", Toast.LENGTH_LONG).show()
             }
