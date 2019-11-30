@@ -16,21 +16,34 @@ class BootBroadcastReceiver : BroadcastReceiver() {
 
         Log.i(TAG, "Boot Receiver is running")
 
-        for(locationData in locationDataList){
-            registerLocationFence(context, locationData.lat, locationData.lng, locationData.radius, locationData.fenceKey)
+        for (locationData in locationDataList) {
+            registerLocationFence(
+                context,
+                locationData.lat,
+                locationData.lng,
+                locationData.radius,
+                locationData.fenceKey
+            )
         }
 
-        for(headPhonesData in headphonesDataList){
-            if(headPhonesData.headphoneState == HEADPHONES_IN){
-                registerHeadphoneInFence(context, headPhonesData.fenceKey)
-            }
-            else {
-                registerHeadphoneOutFence(context, headPhonesData.fenceKey)
+        for (headPhonesData in headphonesDataList) {
+            if (headPhonesData.ringerMode != -1) {
+                if (headPhonesData.headphoneState == HEADPHONES_IN) {
+                    registerHeadphoneInFence(context, headPhonesData.fenceKey)
+                } else {
+                    registerHeadphoneOutFence(context, headPhonesData.fenceKey)
+                }
             }
         }
 
-        for(activityData in activityDataList){
-            registerDetectedActivityFence(context, activityData.activityType, activityData.fenceKey)
+        for (activityData in activityDataList) {
+            if (activityData.ringerMode != -1) {
+                registerDetectedActivityFence(
+                    context,
+                    activityData.activityType,
+                    activityData.fenceKey
+                )
+            }
         }
     }
 
