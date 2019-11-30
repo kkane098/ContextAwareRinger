@@ -17,8 +17,8 @@ class TabAdapter(fm: FragmentManager, private val volumeMap: MutableMap<String, 
             0 -> {
                 TimeActivity()
             }
-            1 -> ActivitiesActivity(volumeMap)
-            2-> LocationsActivity(volumeMap)
+            1 -> LocationsActivity(volumeMap)
+            2-> ActivitiesActivity(volumeMap)
             else -> {
                 return HeadphonesActivity(volumeMap)
             }
@@ -32,8 +32,8 @@ class TabAdapter(fm: FragmentManager, private val volumeMap: MutableMap<String, 
     override fun getPageTitle(position: Int): CharSequence {
         return when (position) {
             0 -> "Time"
-            1 -> "Activities"
-            2-> "Location"
+            1 -> "Location"
+            2-> "Activity"
             else -> {
                 return "Headphones"
             }

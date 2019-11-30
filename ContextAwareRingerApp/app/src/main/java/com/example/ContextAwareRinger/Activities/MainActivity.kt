@@ -28,14 +28,14 @@ class MainActivity : FragmentActivity() {
         Log.i(TAG, "tabLayout: " + tabLayout.toString() + " " + tabLayout!!.childCount)
 
         var timeTab = tabLayout!!.newTab().setText("Time")
-        var activityTab = tabLayout!!.newTab().setText("Activity")
         var locationTab = tabLayout!!.newTab().setText("Location")
+        var activityTab = tabLayout!!.newTab().setText("Activity")
         var headphonesTab = tabLayout!!.newTab().setText("Headphones")
 
 
         tabLayout!!.addTab(timeTab)
-        tabLayout!!.addTab(activityTab)
         tabLayout!!.addTab(locationTab)
+        tabLayout!!.addTab(activityTab)
         tabLayout!!.addTab(headphonesTab)
 
         val volumeMap = readVolumeMap(this, VOLUME_MAP_FILENAME).toMutableMap()
