@@ -5,15 +5,12 @@
     android:layout_height="match_parent">
 
 
-
-
-
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view_activity_on_foot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        app:cardBackgroundColor="#81C784"
+        app:cardBackgroundColor="@color/cardBackground"
         app:cardCornerRadius="12dp"
         app:cardElevation="3dp"
         app:contentPadding="4dp">
@@ -27,7 +24,7 @@
                 android:id="@+id/activityOnFootTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="On foot: "
+                android:text="Ringer When You Are On foot: "
                 />
             <RadioButton
                 android:id="@+id/radioButtonOnFoot1"
@@ -56,9 +53,9 @@
         android:id="@+id/card_view_activity_vehicle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/card_view"
+        android:layout_below="@+id/card_view_activity_on_foot"
         android:layout_margin="5dp"
-        app:cardBackgroundColor="#81C784"
+        app:cardBackgroundColor="@color/cardBackground"
         app:cardCornerRadius="12dp"
         app:cardElevation="3dp"
         app:contentPadding="4dp">
@@ -72,7 +69,7 @@
                 android:id="@+id/activityVehicleTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Vehicle: "
+                android:text="Ringer When You Are In a Vehicle: "
                 />
             <RadioButton
                 android:id="@+id/radioButtonVehicle1"
@@ -96,4 +93,50 @@
         </RadioGroup>
 
     </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view_activity_bicycle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/card_view_activity_vehicle"
+        android:layout_margin="5dp"
+        app:cardBackgroundColor="@color/cardBackground"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="3dp"
+        app:contentPadding="4dp">
+
+
+        <RadioGroup
+            android:id="@+id/activity_bicycle_radio"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/activityBicycleTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ringer When You Are On a Bicycle: "
+                />
+            <RadioButton
+                android:id="@+id/radioButtonBicycle1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Do Not Disturb" />
+
+            <RadioButton
+                android:id="@+id/radioButtonBicycle2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vibrate" />
+
+            <RadioButton
+                android:id="@+id/radioButtonBicycle3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Normal Volume" />
+
+
+        </RadioGroup>
+
+    </androidx.cardview.widget.CardView>
+
 </RelativeLayout>

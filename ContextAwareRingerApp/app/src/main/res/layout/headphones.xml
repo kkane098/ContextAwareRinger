@@ -23,7 +23,7 @@
                 android:id="@+id/headphonesInTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Headphones In: " />
+                android:text="Ringer When You Plug Headphones In: " />
 
             <RadioButton
                 android:id="@+id/radioButtonHeadphone1"
@@ -69,7 +69,7 @@
                 android:id="@+id/headphonesOutTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Headphones Out: " />
+                android:text="Ringer When You Unplug Headphones: " />
 
             <RadioButton
                 android:id="@+id/radioButtonHeadphone4"
