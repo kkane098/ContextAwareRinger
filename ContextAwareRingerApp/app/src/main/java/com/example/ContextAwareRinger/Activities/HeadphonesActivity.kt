@@ -29,6 +29,7 @@ class HeadphonesActivity(private val volumeMap : MutableMap<String, Int>) : Frag
         val rootView = inflater!!.inflate(R.layout.headphones, container, false)
 
         mHeadphonesDataList = readHeadphonesDataList(context!!, HEADPHONES_LIST_FILENAME).toMutableList()
+        Log.i(TAG, "$mHeadphonesDataList")
 
         if(mHeadphonesDataList.size == 0){
             val headPhonesIn = HeadphonesData(HEADPHONES_IN, "headphonesIn", -1)
@@ -36,27 +37,47 @@ class HeadphonesActivity(private val volumeMap : MutableMap<String, Int>) : Frag
             mHeadphonesDataList.add(headPhonesIn)
             mHeadphonesDataList.add(headPhonesOut)
         }
-        // TODO: select appropriate radio button for headphones in
         when(mHeadphonesDataList[0].ringerMode){
-            // TODO: repeat for each state, leave unselected if -1
             AudioManager.RINGER_MODE_NORMAL -> {
+                val normalRadioButton = rootView.findViewById<RadioButton>(R.id.radioButtonHeadphone3)
+                normalRadioButton.isChecked = true
+            }
+            AudioManager.RINGER_MODE_VIBRATE -> {
+                val vibrateRadioButton = rootView.findViewById<RadioButton>(R.id.radioButtonHeadphone2)
+                vibrateRadioButton.isChecked = true
+            }
+            AudioManager.RINGER_MODE_SILENT -> {
+                val silentRadioButton = rootView.findViewById<RadioButton>(R.id.radioButtonHeadphone1)
+                silentRadioButton.isChecked = true
             }
         }
-        // TODO: select appropriate radio button for headphones out
         when(mHeadphonesDataList[1].ringerMode){
-            // TODO: repeat for each state, leave unselected if -1
             AudioManager.RINGER_MODE_NORMAL -> {
+                val normalRadioButton = rootView.findViewById<RadioButton>(R.id.radioButtonHeadphone6)
+                normalRadioButton.isChecked = true
+            }
+            AudioManager.RINGER_MODE_VIBRATE -> {
+                val vibrateRadioButton = rootView.findViewById<RadioButton>(R.id.radioButtonHeadphone5)
+                vibrateRadioButton.isChecked = true
+            }
+            AudioManager.RINGER_MODE_SILENT -> {
+                val silentRadioButton = rootView.findViewById<RadioButton>(R.id.radioButtonHeadphone4)
+                silentRadioButton.isChecked = true
             }
         }
 
-        var radioGroup: RadioGroup = rootView.findViewById(R.id.headphonesRadio) as RadioGroup
+        var inRadioGroup: RadioGroup = rootView.findViewById(R.id.headphonesRadio) as RadioGroup
+        var outRadioGroup: RadioGroup = rootView.findViewById(R.id.headphonesRadio2) as RadioGroup
 
-        // TODO: repeat for headphones out
-        radioGroup.setOnCheckedChangeListener { _, checkedId ->
+        inRadioGroup.setOnCheckedChangeListener { _, checkedId ->
             //var selected = rootView.findViewById<RadioButton>(radioGroup.checkedRadioButtonId)
             updateHeadphoneFence(0, checkedId)
         }
 
+        outRadioGroup.setOnCheckedChangeListener {_, checkedId ->
+            Log.i(TAG, "changed out")
+            updateHeadphoneFence(1, checkedId)
+        }
 
         return rootView
     }
@@ -64,15 +85,15 @@ class HeadphonesActivity(private val volumeMap : MutableMap<String, Int>) : Frag
     private fun updateHeadphoneFence(dataIdx: Int, checkId: Int){
         var ringerMode = -1
 
-        if(checkId == R.id.radioButtonHeadphone1){
+        if(checkId == R.id.radioButtonHeadphone1 || checkId == R.id.radioButtonHeadphone4){
             ringerMode = AudioManager.RINGER_MODE_SILENT
             Log.i(TAG, "Do Not Disturb Selected " + ringerMode)
         }
-        else if(checkId == R.id.radioButtonHeadphone2){
+        else if(checkId == R.id.radioButtonHeadphone2 || checkId == R.id.radioButtonHeadphone5){
             ringerMode = AudioManager.RINGER_MODE_VIBRATE
             Log.i(TAG, "Vibrate Selected " + ringerMode)
         }
-        else if(checkId == R.id.radioButtonHeadphone3){
+        else if(checkId == R.id.radioButtonHeadphone3 || checkId == R.id.radioButtonHeadphone6){
             ringerMode = AudioManager.RINGER_MODE_NORMAL
             Log.i(TAG, "Normal Selected " + ringerMode)
         }
