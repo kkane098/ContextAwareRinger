@@ -32,8 +32,7 @@ class FenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
 
         Log.i(TAG, "Broadcast Received")
-
-        Toast.makeText(context, "Broadcast Received by Receiver", Toast.LENGTH_LONG).show()
+        
         val fenceState = FenceState.extract(intent)
         val fenceKey = fenceState.fenceKey
         val volumeMap = readVolumeMap(context, VOLUME_MAP_FILENAME)
