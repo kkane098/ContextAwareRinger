@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,7 +18,6 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import com.example.ContextAwareRinger.*
 import com.example.ContextAwareRinger.Data.LocationData
 import com.example.ContextAwareRinger.Data.LocationDataListAdapter
@@ -156,16 +156,6 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         locationTitle!!.setText(location.name)
         radiusEditText!!.setText(location.radius.toInt().toString())
 
-        val nameObserver = Observer { name: String? ->
-            Log.i(TAG, "Location updated")
-            if (name != null) {
-
-                locationTitle?.setText(name)
-            }
-        }
-
-        ViewModelProviders.of(activity!!).get(TimeViewModel::class.java).name.observe(this, nameObserver)
-
         when(location.ringerMode){
             AudioManager.RINGER_MODE_VIBRATE -> {
                 val vibrateButton = dialogView.findViewById<RadioButton>(R.id.radioButton2)
@@ -230,7 +220,6 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
                     //TODO: Store location data in the file system
                     Log.i(TAG, "submitting")
                     b.dismiss()
-
                     //TODO: Update the location
                     deleteLocation(location)
                     updateLocation(title, mPlaceName!!, radius, mLat!!, mLong!!, location.fenceKey, ringerMode, position)
@@ -270,22 +259,13 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         val b = dialogBuilder.create()
         b.show()
 
+
         //Get the UI components that contain information used to create a LocationData object
         val buttonSubmit = dialogView.findViewById<Button>(R.id.buttonSubmit)
         val locationTitle: EditText? = dialogView.findViewById(R.id.locationTitle)
         val radiusEditText: EditText? = dialogView.findViewById(R.id.radiusEditText)
         val radioGroup: RadioGroup = dialogView.findViewById(R.id.volumeRadioGroup)
         val buttonLocation: Button = dialogView.findViewById(R.id.place_autocomplete_button)
-
-        val nameObserver = Observer { name: String? ->
-            Log.i(TAG, "Location updated")
-            if (name != null) {
-
-                locationTitle?.setText(name)
-            }
-        }
-
-        ViewModelProviders.of(activity!!).get(TimeViewModel::class.java).name.observe(this, nameObserver)
 
         buttonLocation.setOnClickListener {
             processClick()
@@ -376,8 +356,6 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
                 mLat = p.latLng?.latitude
                 mLong = p.latLng?.longitude
                 mPlaceName = p.name
-
-                ViewModelProviders.of(activity!!).get(TimeViewModel::class.java).name.value = p.name
 
                 Toast.makeText(context!!, "You chose $mPlaceName", Toast.LENGTH_LONG).show()
             }
