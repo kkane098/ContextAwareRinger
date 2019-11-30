@@ -1,29 +1,31 @@
 package com.example.ContextAwareRinger.Activities;
 
-import android.app.Activity;
 import android.widget.RadioButton
 import android.content.pm.PackageManager
 import android.os.Build
 import android.media.AudioManager
 import android.os.Bundle;
-import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import com.example.ContextAwareRinger.*
 import com.example.ContextAwareRinger.Data.*
 import com.google.android.gms.awareness.fence.DetectedActivityFence
-import com.google.android.gms.location.ActivityTransition
 
 
 class ActivitiesActivity(private val volumeMap: MutableMap<String, Int>) : Fragment(){
 
     private val TAG = "ActivitiesActivity"
+    private val ACTIVITY_PERMISSION_REQUEST = 1
+
     lateinit var mActivitiesDataList: MutableList<ActivityData>
+    private var currDataIdx : Int? = null
+    private var currRadioGroup : RadioGroup? = null
 
     private fun needsActivityRuntimePermission(): Boolean {
         // Runtime permission requirement added in Android 10 (API level 29)
@@ -37,7 +39,20 @@ class ActivitiesActivity(private val volumeMap: MutableMap<String, Int>) : Fragm
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == ACTIVITY_PERMISSION_REQUEST) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission is granted
+                updateActivityFences(currDataIdx!!, currRadioGroup!!.checkedRadioButtonId)
+            } else {
+                Toast.makeText(
+                    context!!,
+                    "You need to grant activity detection permissions for this app!",
+                    Toast.LENGTH_SHORT
+                )
+                    .show()
+                currRadioGroup!!.clearCheck()
+            }
+        }
     }
 
 
@@ -109,16 +124,31 @@ class ActivitiesActivity(private val volumeMap: MutableMap<String, Int>) : Fragm
         var vehicleGroup: RadioGroup = rootView.findViewById(R.id.activity_vehicle_radio) as RadioGroup
         var bicycleGroup: RadioGroup = rootView.findViewById(R.id.activity_bicycle_radio) as RadioGroup
 
-        footGroup.setOnCheckedChangeListener { _, checkedId ->
-            updateActivityFences(ACTIVITY_FOOT, checkedId)
+        footGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
+            val button = rootView.findViewById<RadioButton>(checkedId)
+            if(button != null && button.isChecked) {
+                currRadioGroup = radioGroup
+                currDataIdx = ACTIVITY_FOOT
+                updateActivityFences(ACTIVITY_FOOT, checkedId)
+            }
         }
 
-        vehicleGroup.setOnCheckedChangeListener { _, checkedId ->
-            updateActivityFences(ACTIVITY_VEHICLE, checkedId)
+        vehicleGroup.setOnCheckedChangeListener { radioGroup , checkedId ->
+            val button = rootView.findViewById<RadioButton>(checkedId)
+            if(button != null && button.isChecked) {
+                currRadioGroup = radioGroup
+                currDataIdx = ACTIVITY_VEHICLE
+                updateActivityFences(ACTIVITY_VEHICLE, checkedId)
+            }
         }
 
-        bicycleGroup.setOnCheckedChangeListener { _, checkedId ->
-            updateActivityFences(ACTIVITY_BICYCLE, checkedId)
+        bicycleGroup.setOnCheckedChangeListener { radioGroup, checkedId ->
+            val button = rootView.findViewById<RadioButton>(checkedId)
+            if(button != null && button.isChecked) {
+                currRadioGroup = radioGroup
+                currDataIdx = ACTIVITY_BICYCLE
+                updateActivityFences(ACTIVITY_BICYCLE, checkedId)
+            }
         }
 
         return rootView
@@ -133,30 +163,48 @@ class ActivitiesActivity(private val volumeMap: MutableMap<String, Int>) : Fragm
         }
         else if((checkedId == R.id.radioButtonBicycle2) || (checkedId == R.id.radioButtonOnFoot2) || (checkedId == R.id.radioButtonVehicle2)){
             ringerMode = AudioManager.RINGER_MODE_VIBRATE
-            Log.i(TAG, "Changed to Silent")
+            Log.i(TAG, "Changed to Vibrate")
         }
         else if((checkedId == R.id.radioButtonBicycle3) || (checkedId == R.id.radioButtonOnFoot3) || (checkedId == R.id.radioButtonVehicle3)){
             ringerMode = AudioManager.RINGER_MODE_NORMAL
-            Log.i(TAG, "Changed to Silent")
+            Log.i(TAG, "Changed to Normal")
         }
 
-        var currData = mActivitiesDataList[dataIdx]
-        mActivitiesDataList[dataIdx] = ActivityData(currData.activityType, currData.fenceKey, ringerMode)
-
-        writeActivityDataList(context!!, mActivitiesDataList, ACTIVITY_LIST_FILENAME)
-        volumeMap[currData.fenceKey] = ringerMode
-        writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
-
-        // Register the Fence
-        if(currData.activityType == ACTIVITY_FOOT){
-            registerDetectedActivityFence(context!!, DetectedActivityFence.ON_FOOT, currData.fenceKey)
+        if(needsActivityRuntimePermission()){
+            requestPermissions(
+                arrayOf(android.Manifest.permission.ACTIVITY_RECOGNITION),
+                ACTIVITY_PERMISSION_REQUEST
+            )
         }
-        else if(currData.activityType == ACTIVITY_VEHICLE){
-            registerDetectedActivityFence(context!!, DetectedActivityFence.IN_VEHICLE, currData.fenceKey)
-        }
-        else if(currData.activityType == ACTIVITY_BICYCLE){
-            registerDetectedActivityFence(context!!, DetectedActivityFence.ON_BICYCLE, currData.fenceKey)
-        }
+        else {
+            var currData = mActivitiesDataList[dataIdx]
+            mActivitiesDataList[dataIdx] =
+                ActivityData(currData.activityType, currData.fenceKey, ringerMode)
 
+            writeActivityDataList(context!!, mActivitiesDataList, ACTIVITY_LIST_FILENAME)
+            volumeMap[currData.fenceKey] = ringerMode
+            writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
+
+            // Register the Fence
+            if (currData.activityType == ACTIVITY_FOOT) {
+                registerDetectedActivityFence(
+                    context!!,
+                    DetectedActivityFence.ON_FOOT,
+                    currData.fenceKey
+                )
+            } else if (currData.activityType == ACTIVITY_VEHICLE) {
+                registerDetectedActivityFence(
+                    context!!,
+                    DetectedActivityFence.IN_VEHICLE,
+                    currData.fenceKey
+                )
+            } else if (currData.activityType == ACTIVITY_BICYCLE) {
+                registerDetectedActivityFence(
+                    context!!,
+                    DetectedActivityFence.ON_BICYCLE,
+                    currData.fenceKey
+                )
+            }
+        }
     }
 }
