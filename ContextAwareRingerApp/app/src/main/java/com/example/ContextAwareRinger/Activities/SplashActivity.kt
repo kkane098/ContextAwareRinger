@@ -4,8 +4,6 @@ import android.app.NotificationManager
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import com.example.ContextAwareRinger.R
 import android.content.Intent
 import android.os.Build
 

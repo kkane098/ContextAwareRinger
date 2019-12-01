@@ -40,11 +40,12 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
         val radioGroup : RadioGroup = rootView.findViewById(R.id.volumeRadioGroupTime)
         val spinner : Spinner = rootView.findViewById(R.id.timeSelectionSpinner)
         timeButton = rootView.findViewById(R.id.startTimeButton)
+
         //Initialize viewmodel and observe the time data
         viewModel = ViewModelProviders.of(activity!!).get(TimeViewModel::class.java)
         Log.i(TAG, "Oncreate called")
 
-        //TODO: Add code so that information is restored when update dialog box is started
+
         var tempHr = (timeItem.hour%12).toString()
         if(timeItem.hour%12 == 0){
             tempHr = "12"
@@ -57,11 +58,6 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
             tempMn = "0" + timeItem.min
         }
         timeButton.text = "Time Selected - " + tempHr + ":" + tempMn
-
-        /*this.hour = timeItem.hour!!
-        this.minute = timeItem.min!!
-        Log.i(TAG,"CHECKING IF HOUR WORKING" + this.hour.toString())
-        Log.i(TAG,"CHECKING IF MINUTE WORKING" + this.minute.toString())*/
 
         when(timeItem.ringerMode){
             AudioManager.RINGER_MODE_SILENT -> (rootView.findViewById(R.id.radioButtonUpdateDeleteTime) as RadioButton).isChecked = true
@@ -101,7 +97,7 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
             val timeText : TextView = rootView.findViewById(R.id.startTimeButton)
 
             //Check that appropriate values have been provided
-            if (hour != null && minute != null && hour != -1 && minute != 1) {
+            if (hour != null && minute != null && hour != -1 && minute != -1) {
                 var hourStr = ""
 
                 //Pad hour with a 0 if it is < 10
@@ -180,7 +176,7 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
 
                 Log.i(TAG, "Time object created with Hour: " + hour + ", Minute: " + minute + ", Volume: " + selected!!.text + ", Interval: " + spinner.selectedItem.toString())
 
-                //TODO: Delete the existing time object
+                //Delete the existing time object
                 timeDataList.remove(timeItem)
                 writeTimeDataList(context!!,timeDataList, TIME_LIST_FILENAME)
 
@@ -189,10 +185,10 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
 
                 timeAdapter.delete(timeItem)
 
-                //TODO: Unregister the Time Worker
+                //Unregister the Time Worker
                 removeTimeWorker(context!!, timeItem.workKey)
 
-                //TODO: Add the updated time object
+                //Add the updated time object
                 val time = TimeData(hour!!, minute!!, repetitionInterval, workKey, ringerMode!!)
                 volumeMap[workKey] = ringerMode!!
                 writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
@@ -200,7 +196,7 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
                 timeAdapter.add(time,positionInView)
                 writeTimeDataList(context!!, timeDataList, TIME_LIST_FILENAME)
 
-                //TODO: Register Time Worker
+                //Register Time Worker
                 enqueueTimeWorker(context!!, hour!!, minute!!, repetitionInterval, ringerMode!!, workKey)
             }
             else {
@@ -213,7 +209,7 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
         }
 
         deleteButton.setOnClickListener {
-            //TODO: Delete the item
+            //Delete the item
             timeDataList.remove(timeItem)
             writeTimeDataList(context!!,timeDataList, TIME_LIST_FILENAME)
 
@@ -222,19 +218,13 @@ class TimeUpdateDeleteDialogFragment(var timeDataList : MutableList<TimeData>, v
 
             timeAdapter.delete(timeItem)
 
-            //TODO: Unregister the fence
+            //Unregister the fence
             removeTimeWorker(context!!, timeItem.workKey)
             dismiss()
         }
 
         return rootView
     }
-
-    /*override fun onDetach() {
-        super.onDetach()
-        viewModel.hour.value = -1
-        viewModel.minute.value = -1
-    }*/
 
 
 

@@ -54,7 +54,6 @@
         style="?android:attr/buttonBarButtonStyle"
         android:textColor="@color/primary_dark"/>
 
-    <!--    //TODO: May want to add a title or instructions to the spinner, or some indication of what the values are for -->
     <Spinner
         android:id="@+id/timeSelectionSpinner"
         android:layout_width="match_parent"

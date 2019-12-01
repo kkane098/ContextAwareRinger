@@ -4,8 +4,6 @@ import android.content.Context
 import android.media.AudioManager
 import android.util.Log
 import androidx.work.*
-import java.util.*
-import java.util.concurrent.TimeUnit
 
 class VolumeWorker(private val context: Context, private val params: WorkerParameters) :
     Worker(context, params) {

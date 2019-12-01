@@ -4,7 +4,7 @@ import android.widget.RadioButton
 import android.content.pm.PackageManager
 import android.os.Build
 import android.media.AudioManager
-import android.os.Bundle;
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +18,7 @@ import com.example.ContextAwareRinger.Data.*
 import com.google.android.gms.awareness.fence.DetectedActivityFence
 
 
-class ActivitiesActivity(private val volumeMap: MutableMap<String, Int>) : Fragment(){
+class ActivitiesFragment(private val volumeMap: MutableMap<String, Int>) : Fragment(){
 
     private val TAG = "ActivitiesActivity"
     private val ACTIVITY_PERMISSION_REQUEST = 1
@@ -56,9 +56,7 @@ class ActivitiesActivity(private val volumeMap: MutableMap<String, Int>) : Fragm
     }
 
 
-    //TODO: look into making this class a fragment
-    //TODO: Add plus button to UI
-    //TODO: Change listview to cardview
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val rootView = inflater!!.inflate(R.layout.activity, container, false)

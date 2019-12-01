@@ -2,7 +2,6 @@ package com.example.ContextAwareRinger.Activities
 
 import android.app.Dialog
 import android.app.TimePickerDialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,7 +11,6 @@ import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.example.ContextAwareRinger.Data.LocationData
 import com.example.ContextAwareRinger.Data.TimeData
 import java.util.*
 import android.media.AudioManager
@@ -134,7 +132,6 @@ class TimeDialogFragment(var timeDataList : MutableList<TimeData>, var volumeMap
 
                 Log.i(TAG, "Time object created with Hour: " + hour + ", Minute: " + minute + ", Volume: " + selected!!.text + ", Interval: " + spinner.selectedItem.toString())
 
-                //TODO: Create list adapter stuff
                 val time = TimeData(hour!!, minute!!, repetitionInterval, workKey, ringerMode!!)
                 volumeMap[workKey] = ringerMode!!
                 writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
@@ -142,7 +139,6 @@ class TimeDialogFragment(var timeDataList : MutableList<TimeData>, var volumeMap
                 timeAdapter.add(time)
                 writeTimeDataList(context!!, timeDataList, TIME_LIST_FILENAME)
 
-                //TODO: Register Time Worker
                 enqueueTimeWorker(context!!, hour!!, minute!!, repetitionInterval, ringerMode!!, workKey)
 
                 //Close the dialog box

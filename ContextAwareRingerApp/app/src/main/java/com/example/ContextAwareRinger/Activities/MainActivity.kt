@@ -1,21 +1,13 @@
 package com.example.ContextAwareRinger.Activities
 
-import android.content.Context
-import android.media.AudioManager
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import com.example.ContextAwareRinger.*
-import com.example.ContextAwareRinger.Data.ActivityData
 import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 
-// Change UI to be loading screen that checks permissions
 class MainActivity : FragmentActivity() {
     var tabLayout: TabLayout? = null
     val TAG = "MAIN_ACTIVITY"

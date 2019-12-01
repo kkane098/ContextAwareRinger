@@ -31,7 +31,7 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import java.text.FieldPosition
 import java.util.*
 
-class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragment() {
+class LocationsFragment(private val volumeMap: MutableMap<String, Int>) : Fragment() {
 
     var TAG = "LocationActivity"
     var floatingActionButton: FloatingActionButton? = null
@@ -132,7 +132,7 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
 
     private fun showUpdateDeleteDialog(location: LocationData, position: Int){
         Log.i(TAG,"Update or Delete location")
-        //TODO: Set the Update-Delete Dialog
+
         mLat = location.lat
         mLong = location.lng
         mPlaceName = location.placeName
@@ -175,7 +175,7 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
             processClick()
         }
 
-        //TODO: Handle Update
+        // Handle Update
         buttonUpdate.setOnClickListener {
             val title = locationTitle?.text.toString().trim { it <= ' ' }
 
@@ -217,10 +217,10 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
                     )
                 } else {
 
-                    //TODO: Store location data in the file system
+
                     Log.i(TAG, "submitting")
                     b.dismiss()
-                    //TODO: Update the location
+                    //Update the location
                     deleteLocation(location)
                     updateLocation(title, mPlaceName!!, radius, mLat!!, mLong!!, location.fenceKey, ringerMode, position)
                 }
@@ -233,10 +233,10 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
             }
         }
 
-        //TODO: Handle Delete
+        //Handle Delete
         buttonDelete.setOnClickListener{
             deleteLocation(location)
-            //TODO: close the dialog box
+            //close the dialog box
             b.dismiss()
         }
     }
@@ -386,7 +386,7 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         volumeMap[fenceKey] = ringerMode
         writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
 
-        // TODO: Register the fence
+        // Register the fence
         registerLocationFence(context!!,latitude,longitude,radius,fenceKey)
 
     }
@@ -416,7 +416,7 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         volumeMap[fenceKey] = ringerMode
         writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
 
-        // TODO: Register the fence
+        //Register the fence
         registerLocationFence(context!!,latitude,longitude,radius,fenceKey)
     }
 
@@ -434,7 +434,7 @@ class LocationsActivity(private val volumeMap: MutableMap<String, Int>) : Fragme
         volumeMap.remove(item.fenceKey)
         writeVolumeMap(context!!, volumeMap, VOLUME_MAP_FILENAME)
 
-        //TODO: Unregister the Fence
+        //Unregister the Fence
         unregisterFence(context!!,item.fenceKey)
 
         // Doing adapter stuff here

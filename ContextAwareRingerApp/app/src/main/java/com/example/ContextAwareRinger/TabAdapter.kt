@@ -5,22 +5,22 @@ package com.example.ContextAwareRinger
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.example.ContextAwareRinger.Activities.ActivitiesActivity
-import com.example.ContextAwareRinger.Activities.HeadphonesActivity
-import com.example.ContextAwareRinger.Activities.LocationsActivity
-import com.example.ContextAwareRinger.Activities.TimeActivity
+import com.example.ContextAwareRinger.Activities.ActivitiesFragment
+import com.example.ContextAwareRinger.Activities.HeadphonesFragment
+import com.example.ContextAwareRinger.Activities.LocationsFragment
+import com.example.ContextAwareRinger.Activities.TimeFragment
 
 class TabAdapter(fm: FragmentManager, private val volumeMap: MutableMap<String, Int>) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> {
-                TimeActivity()
+                TimeFragment()
             }
-            1 -> LocationsActivity(volumeMap)
-            2-> ActivitiesActivity(volumeMap)
+            1 -> LocationsFragment(volumeMap)
+            2-> ActivitiesFragment(volumeMap)
             else -> {
-                return HeadphonesActivity(volumeMap)
+                return HeadphonesFragment(volumeMap)
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.example.ContextAwareRinger.Activities;
+package com.example.ContextAwareRinger.Activities
 
 import android.app.Activity;
 import android.media.AudioManager
@@ -18,8 +18,7 @@ import com.example.ContextAwareRinger.Data.HEADPHONES_IN
 import com.example.ContextAwareRinger.Data.HEADPHONES_OUT
 import com.example.ContextAwareRinger.Data.HeadphonesData
 
-//TODO: look into making this class a fragment
-class HeadphonesActivity(private val volumeMap : MutableMap<String, Int>) : Fragment() {
+class HeadphonesFragment(private val volumeMap : MutableMap<String, Int>) : Fragment() {
 
     private val TAG = "HeadphonesActivity"
     lateinit var mHeadphonesDataList: MutableList<HeadphonesData>

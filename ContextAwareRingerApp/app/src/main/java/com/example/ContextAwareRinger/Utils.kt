@@ -41,48 +41,6 @@ val TIME_LIST_FILENAME = "timeList.txt"
 val HEADPHONES_LIST_FILENAME = "headphonesList.txt"
 val ACTIVITY_LIST_FILENAME = "activityList.txt"
 
-//Example usage of these functions, the following code will write an object to a file then read it back:
-//  val activityData = ActivityData(1, "test", 1)
-//  writeToFile(filesDir.toString() + "/out.tmp", activityData as Object)
-//  val data = readFromFile(filesDir.toString() + "/out.tmp") as ActivityData
-
-/*fun writeToFile(fileName: String?, obj: Object?) {
-    try {
-        // write object to file
-        val fileOut = FileOutputStream(fileName)
-        val objectOut = ObjectOutputStream(fileOut)
-        objectOut.writeObject(obj)
-        objectOut.close()
-        Log.i(TAG, "Finished writing to file")
-
-    } catch (e: FileNotFoundException) {
-        e.printStackTrace()
-    } catch (e: IOException) {
-        e.printStackTrace()
-    } catch (e: ClassNotFoundException) {
-        e.printStackTrace()
-    }
-
-}
-
-fun readFromFile(fileName: String?): Any? {
-    try {
-        val fileInput = FileInputStream(fileName)
-        val objectInput = ObjectInputStream(fileInput)
-        val obj = objectInput.readObject() ?: return null
-        Log.i(TAG, "Finished reading from file, returning non null object")
-        return obj
-
-    } catch (e: FileNotFoundException) {
-        e.printStackTrace()
-    } catch (e: IOException) {
-        e.printStackTrace()
-    } catch (e: ClassNotFoundException) {
-        e.printStackTrace()
-    }
-    return null
-}*/
-
 private fun getPendingIntent(context: Context): PendingIntent {
     val intent = Intent(context, FenceBroadcastReceiver::class.java)
     intent.action = FENCE_RECEIVER_ACTION

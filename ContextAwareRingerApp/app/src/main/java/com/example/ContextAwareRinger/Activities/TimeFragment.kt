@@ -12,7 +12,7 @@ import com.example.ContextAwareRinger.Data.TimeDataListAdapter
 import com.example.ContextAwareRinger.Data.TimeData
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class TimeActivity() : Fragment() {
+class TimeFragment() : Fragment() {
     val TAG = "Time Activity"
     var floatingActionButton : FloatingActionButton? = null
     lateinit var timeDataList : MutableList<TimeData>

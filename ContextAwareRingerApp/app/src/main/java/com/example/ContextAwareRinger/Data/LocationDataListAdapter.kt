@@ -1,17 +1,12 @@
 package com.example.ContextAwareRinger.Data
 
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
-import android.location.Location
 import android.view.LayoutInflater
 
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.example.ContextAwareRinger.Activities.LocationsActivity
 import com.example.ContextAwareRinger.R
-import org.w3c.dom.Text
 import java.util.ArrayList
 
 class LocationDataListAdapter (private val mContext: Context) : BaseAdapter() {
